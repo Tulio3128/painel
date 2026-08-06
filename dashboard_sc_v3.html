@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="sc-version" content="20260728113453">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Painel SUS · Santa Casa Montes Claros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.44.0/apexcharts.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+:root{
+  --bg:#0F172A;--bg1:#111827;--bg2:#1E293B;--bg3:#253348;
+  --bdr:rgba(255,255,255,.06);--bdr2:rgba(255,255,255,.10);--bdr3:rgba(255,255,255,.04);
+  --blue:#3B82F6;--blue-d:rgba(59,130,246,.12);--blue-b:rgba(59,130,246,.25);
+  --grn:#22C55E;--grn-d:rgba(34,197,94,.12);
+  --red:#EF4444;--red-d:rgba(239,68,68,.12);
+  --amb:#F59E0B;--amb-d:rgba(245,158,11,.12);
+  --pur:#8B5CF6;--pur-d:rgba(139,92,246,.12);
+  --cyn:#06B6D4;--cyn-d:rgba(6,182,212,.12);
+  --txt:#F1F5F9;--txt2:#94A3B8;--txt3:#64748B;
+  --fh:'Manrope',sans-serif;--fb:'Inter',sans-serif;
+  --r:14px;--r2:10px;--r3:8px;
+  --sh:0 1px 3px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  --sh2:0 8px 32px rgba(0,0,0,.45);
+  --sbw:228px;--trans:.18s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(circle at top left,#0f2b52 0%,#071427 45%,#020817 100%);color:var(--txt);font-family:var(--fb);font-size:13px;line-height:1.5;display:flex;min-height:100vh;}
+
+#ld{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.ld-logo{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#3B82F6,#8B5CF6);display:grid;place-items:center;font-family:var(--fh);font-size:22px;font-weight:800;color:#fff;box-shadow:0 0 32px rgba(59,130,246,.4)}
+.ld-bar{width:220px;height:3px;background:var(--bg2);border-radius:2px;overflow:hidden}
+.ld-bar-fill{height:100%;width:0;border-radius:2px;background:linear-gradient(90deg,#3B82F6,#8B5CF6);transition:width .4s ease}
+#ld-txt{font-size:12px;color:var(--txt3);letter-spacing:.5px}
+
+.app{display:flex;min-height:100vh;width:100%;}
+
+/* SIDEBAR */
+.sb{width:210px;flex-shrink:0;background:rgba(8,16,34,.9);backdrop-filter:blur(12px);border-right:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;transition:width var(--trans);position:sticky;top:0;height:100vh;align-self:flex-start;overflow-y:auto;overflow-x:hidden;z-index:10;box-shadow:2px 0 20px rgba(0,0,0,.4);}
+.sb.collapsed{width:60px}
+.sb-brand{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:12px;min-height:72px}
+.sb-logo{width:36px;height:36px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,#3B82F6,#8B5CF6);display:grid;place-items:center;font-family:var(--fh);font-size:15px;font-weight:800;color:#fff;box-shadow:0 0 16px rgba(59,130,246,.3)}
+.sb-name{overflow:hidden;transition:opacity var(--trans),width var(--trans)}
+.sb-name .n1{font-family:var(--fh);font-size:15px;font-weight:700;color:var(--txt);white-space:nowrap}
+.sb-name .n2{font-size:10px;color:var(--txt3);letter-spacing:.5px;text-transform:uppercase;margin-top:1px;white-space:nowrap}
+.sb.collapsed .sb-name{opacity:0;width:0}
+.sb-toggle{position:absolute;right:-10px;top:22px;width:20px;height:20px;border-radius:50%;background:var(--bg2);border:1px solid var(--bdr2);display:grid;place-items:center;cursor:pointer;font-size:9px;color:var(--txt3);transition:var(--trans);z-index:5}
+.sb-toggle:hover{background:var(--bg3);color:var(--txt)}
+.sb-sep{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:var(--txt3);font-weight:600;padding:14px 16px 5px;white-space:nowrap;overflow:hidden}
+.sb.collapsed .sb-sep{opacity:0}
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 12px 8px}
+.si{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;cursor:pointer;color:rgba(148,163,184,.85);font-size:13px;font-weight:500;transition:all .2s;margin-bottom:4px;white-space:nowrap;overflow:hidden;position:relative}
+.si:hover{background:rgba(255,255,255,.05);color:#fff}
+.si.on{background:linear-gradient(90deg,rgba(18,56,103,.9),rgba(27,78,140,.5));color:#fff;font-weight:600;border-left:3px solid #38bdf8;border-radius:12px}
+.si.on::before{display:none}
+.si .ic{width:32px;height:32px;border-radius:var(--r3);flex-shrink:0;display:grid;place-items:center;font-size:14px;background:transparent;transition:var(--trans)}
+.si:hover .ic{background:var(--bdr)}
+.si.on .ic{background:var(--blue-b)}
+.si-lbl{overflow:hidden;transition:opacity var(--trans),max-width var(--trans);max-width:200px}
+.sb.collapsed .si-lbl{opacity:0;max-width:0}
+.si.dim{opacity:.3;pointer-events:none}
+
+.sb-flt{border-top:1px solid var(--bdr);padding:14px 12px 16px;overflow:hidden}
+.sb.collapsed .sb-flt{opacity:0;pointer-events:none}
+.sfh{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt3);font-weight:700;margin-bottom:10px}
+.sfr{margin-bottom:8px}
+.sfl{font-size:10px;color:var(--txt2);margin-bottom:3px;font-weight:500}
+.sfs{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--bdr2);color:var(--txt);border-radius:var(--r3);padding:6px 9px;font-family:var(--fb);font-size:11px;outline:none;cursor:pointer;transition:border-color var(--trans);appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2364748B'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:24px}
+.sfs option{background:#1E293B;color:#F1F5F9}
+.sfs:focus{border-color:var(--blue-b);box-shadow:0 0 0 2px var(--blue-d)}
+.bap{width:100%;margin-top:10px;background:linear-gradient(135deg,#3B82F6,#6366F1);color:#fff;border:none;border-radius:var(--r3);padding:8px;font-family:var(--fh);font-size:13px;font-weight:700;cursor:pointer;transition:opacity var(--trans),transform var(--trans);letter-spacing:.2px}
+.bap:hover{opacity:.9;transform:translateY(-1px)}
+.bcl{width:100%;margin-top:5px;background:transparent;border:1px solid var(--bdr2);color:var(--txt3);border-radius:var(--r3);padding:6px;font-size:10px;cursor:pointer;transition:var(--trans)}
+.bcl:hover{border-color:var(--bdr2);color:var(--txt2);background:var(--bdr3)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:visible;}
+.header{background:var(--bg1);border-bottom:1px solid var(--bdr);padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:20;}
+.h-left{display:flex;align-items:center;gap:14px}
+.h-title{font-family:var(--fh);font-size:19px;font-weight:800;color:var(--txt);letter-spacing:-.2px}
+.h-pill{font-size:10px;font-weight:600;letter-spacing:.3px;background:var(--blue-d);color:var(--blue);border:1px solid var(--blue-b);border-radius:20px;padding:3px 10px}
+.h-right{display:flex;align-items:center;gap:12px}
+.h-upd{text-align:right}
+.h-upd-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:var(--txt3)}
+.h-upd-val{font-size:11.5px;font-weight:600;color:var(--cyn);margin-top:1px}
+.h-upd-nxt{font-size:9px;color:var(--txt3);margin-top:1px}
+.btn-exp{background:var(--bg2);border:1px solid var(--bdr2);color:var(--txt2);border-radius:var(--r3);padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:var(--trans);display:flex;align-items:center;gap:6px}
+.btn-exp:hover{border-color:var(--blue-b);color:var(--blue);background:var(--blue-d)}
+.rcnt{font-size:10px;font-weight:600;color:var(--txt3);background:var(--bg2);border:1px solid var(--bdr);border-radius:20px;padding:3px 10px}
+
+.scrl{flex:1;padding:20px 24px 32px;}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
+
+/* KPI CARDS */
+.krow{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:20px}
+.krow-sm .kpi{padding:11px 13px 9px;}
+.krow-sm .kpi-val{font-size:24px;margin-bottom:5px;}
+.krow-sm .kpi-ico{width:30px;height:30px;font-size:14px;}
+.krow-sm .kpi-lbl{font-size:9px;}
+.kpi{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:18px 18px 14px;position:relative;overflow:hidden;transition:border-color var(--trans),box-shadow var(--trans),transform var(--trans);cursor:default}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--k-accent,#3B82F6),transparent);opacity:.5}
+.kpi:hover{border-color:var(--bdr2);box-shadow:0 0 0 1px var(--bdr2),var(--sh);transform:translateY(-2px)}
+.kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.kpi-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--txt3);font-weight:600}
+.kpi-ico{width:34px;height:34px;border-radius:var(--r3);flex-shrink:0;display:grid;place-items:center;font-size:16px;background:var(--k-accent-d,var(--blue-d));border:1px solid var(--k-accent-b,var(--blue-b))}
+.kpi-val{font-family:var(--fh);font-size:30px;font-weight:800;color:var(--txt);line-height:1;margin-bottom:8px;font-variant-numeric:tabular-nums}
+.kpi-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.kpi-trend{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600}
+.kpi-trend.pos{color:var(--grn)}.kpi-trend.neg{color:var(--red)}.kpi-trend.warn{color:var(--amb)}.kpi-trend.neu{color:var(--txt3)}
+.kpi-spark{width:72px;height:28px;flex-shrink:0;opacity:.8}
+
+/* SECTION */
+.sh{display:flex;align-items:center;gap:10px;margin:22px 0 12px;font-family:var(--fh);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--txt)}
+.sh::after{content:'';flex:1;height:1px;background:var(--bdr)}
+.tag{font-size:9px;font-family:var(--fb);font-weight:600;border-radius:20px;padding:2px 9px;letter-spacing:.3px;text-transform:uppercase}
+.tag-b{background:var(--blue-d);color:var(--blue);border:1px solid var(--blue-b)}
+.tag-g{background:var(--grn-d);color:var(--grn);border:1px solid rgba(34,197,94,.25)}
+.tag-a{background:var(--amb-d);color:var(--amb);border:1px solid rgba(245,158,11,.25)}
+.tag-p{background:var(--pur-d);color:var(--pur);border:1px solid rgba(139,92,246,.25)}
+
+/* TABLES */
+.twrap{overflow-x:auto;margin-bottom:16px;border-radius:var(--r)}
+table{width:100%;border-collapse:collapse;background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;font-size:12px}
+thead tr{background:rgba(255,255,255,.025)}
+th{font-family:var(--fh);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--txt3);padding:10px 14px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--bdr)}
+th:first-child{text-align:left}
+td{padding:10px 14px;text-align:right;color:var(--txt2);border-bottom:1px solid var(--bdr3);transition:background var(--trans)}
+td:first-child{text-align:left;color:var(--txt)}
+tr:last-child td{border-bottom:none}
+tr:hover:not(thead tr):not(.tot){background:rgba(255,255,255,.025)}
+tr.gr{background:rgba(59,130,246,.06)}
+tr.gr td{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--blue)}
+tr.sub td{color:var(--txt3);font-size:11.5px}
+tr.sub td:first-child{padding-left:28px}
+tr.tot{background:rgba(255,255,255,.03);border-top:1px solid var(--bdr2)}
+tr.tot td{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--txt)}
+.mn{font-variant-numeric:tabular-nums}
+.badge{display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border-radius:6px;padding:2px 8px;font-variant-numeric:tabular-nums}
+.badge.pos{background:var(--grn-d);color:var(--grn)}.badge.neg{background:var(--red-d);color:var(--red)}.badge.neu{background:var(--bdr3);color:var(--txt3)}
+.pbw{display:flex;align-items:center;gap:7px;justify-content:flex-end}
+.pb{flex:1;min-width:50px;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.pbf{height:100%;border-radius:3px;transition:width 1s ease}
+
+/* CHARTS */
+.cg{display:grid;gap:14px;margin-bottom:16px}
+.c2{grid-template-columns:1fr 1fr}
+.c12{grid-template-columns:5fr 7fr}
+.cc{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:16px 18px;transition:var(--trans)}
+.cc:hover{border-color:var(--bdr2)}
+.ct{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--txt);letter-spacing:-.1px}
+.cs{font-size:10px;color:var(--txt3);margin:3px 0 14px;line-height:1.4}
+
+/* UTI BADGES */
+.ubg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.ub{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:11px 13px;border-top:2px solid var(--uc,var(--blue));transition:var(--trans)}
+.ub:hover{box-shadow:var(--sh);transform:translateY(-1px)}
+.ubl{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--txt3);margin-bottom:4px;font-weight:600}
+.ubv{font-family:var(--fh);font-size:22px;font-weight:800;color:var(--uc,var(--blue));line-height:1}
+.ubc{font-size:9.5px;color:var(--txt3);margin-top:3px}
+.ubp{font-size:10.5px;font-weight:600;margin-top:3px}
+
+/* RANKING */
+.rkr{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr3);transition:background var(--trans)}
+.rkr:hover{background:rgba(255,255,255,.02);padding-left:4px;padding-right:4px;margin:0 -4px;border-radius:6px;border-bottom-color:transparent}
+.rkn{font-size:9px;color:var(--txt3);width:18px;text-align:right;flex-shrink:0;font-weight:700}
+.rknm{flex:1;font-size:11px;color:var(--txt2);line-height:1.3}
+.rkbg{width:80px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;flex-shrink:0}
+.rkf{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--cyn),var(--blue))}
+.rkv{font-size:11px;font-weight:600;color:var(--blue);width:76px;text-align:right;flex-shrink:0}
+
+
+/* ── Section header rows inside tables ── */
+tr.sec-row td{
+  font-family:var(--fh);font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;color:var(--cyn);text-align:center;padding:7px 14px;
+  background:rgba(6,182,212,.08);border-top:1px solid rgba(6,182,212,.2);
+  border-bottom:1px solid rgba(6,182,212,.15);
+}
+
+.mod{display:none}.mod.on{display:block}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeInUp .4s ease both}
+.foot{text-align:center;font-size:10px;color:var(--txt3);margin-top:24px;padding-top:18px;border-top:1px solid var(--bdr);letter-spacing:.3px}
+@media(max-width:1100px){.c12{grid-template-columns:1fr 1fr}.ubg{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.c2,.c12{grid-template-columns:1fr}.ubg{grid-template-columns:repeat(2,1fr)}.krow{grid-template-columns:repeat(2,1fr)}.sb{display:none}}
+@media(max-width:600px){.krow{grid-template-columns:1fr 1fr}}
+
+/* ═══ PIXEL-PERFECT — matches screenshot exactly ═══════════ */
+
+/* Body gradient */
+body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50%,#020a18 100%) !important;}
+
+/* Glass cards */
+.glass-card{
+  background:rgba(10,18,36,.82);
+  backdrop-filter:blur(16px) saturate(1.4);
+  -webkit-backdrop-filter:blur(16px) saturate(1.4);
+  border:1px solid rgba(255,255,255,.07);
+  box-shadow:0 4px 24px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.05);
+  border-radius:16px;overflow:hidden;
+}
+
+/* Section header — dark with subtle separator */
+.sec-hdr-blue{
+  background:rgba(8,16,34,.7);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding:15px 22px;
+  font-size:15px;font-weight:700;font-family:var(--fh);
+  letter-spacing:.2px;color:#f1f5f9;
+}
+.sec-hdr-plain{
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding:15px 20px;
+  font-size:13px;font-weight:700;font-family:var(--fh);
+  letter-spacing:.2px;color:#f1f5f9;
+}
+
+/* 2-col layout */
+.prod-grid-new{display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start;}
+.prod-col-left{display:flex;flex-direction:column;gap:12px}
+.prod-col-right{display:flex;flex-direction:column;gap:12px}
+
+/* Tables */
+.tbl-new{width:100%;border-collapse:collapse;}
+.tbl-new thead tr{background:rgba(10,22,46,.85);}
+.tbl-new thead th{
+  font-size:9.5px;text-transform:uppercase;letter-spacing:.7px;
+  color:rgba(148,163,184,.75);padding:11px 14px;
+  font-weight:700;white-space:nowrap;text-align:center;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.tbl-new thead th:first-child{text-align:left}
+.tbl-new tbody td{
+  padding:12px 14px;text-align:center;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:13px;color:rgba(226,232,240,.9);
+}
+.tbl-new tbody td:first-child{text-align:left;color:#e2e8f0}
+.tbl-new tbody tr:last-child td{border-bottom:none}
+.tbl-new tbody tr:hover{background:rgba(56,189,248,.06);transition:background .15s}
+.tbl-new .tr-total{background:rgba(7,28,58,.6);}
+.tbl-new .tr-total td{font-weight:700;font-size:12.5px;color:#e2e8f0}
+.tbl-new .tr-total td:first-child{color:#67e8f9;}
+.tbl-new .tr-sub td:first-child{padding-left:28px;color:rgba(148,163,184,.85);}
+.tbl-new .pos-v{color:#4ade80!important;font-weight:600}
+.tbl-new .neg-v{color:#f87171!important;font-weight:600}
+
+/* KPI cards */
+.kpi-new{
+  background:rgba(10,18,36,.82);
+  backdrop-filter:blur(16px);border-radius:16px;
+  padding:18px 20px 20px;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 2px 16px rgba(0,0,0,.5);
+}
+.kpi-new-lbl{
+  font-size:10px;text-transform:uppercase;letter-spacing:.8px;
+  color:rgba(148,163,184,.8);margin-bottom:14px;font-weight:600;
+}
+.kpi-new-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.kpi-new-val{font-family:var(--fh);font-size:44px;font-weight:800;line-height:1;}
+.kpi-new-ico{
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  background:rgba(255,255,255,.06);display:grid;place-items:center;font-size:19px;
+}
+
+/* Cumprimento rows */
+.cump-r{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);
+  font-size:12.5px;
+}
+.cump-r:last-child{border-bottom:none}
+.cump-lbl{color:rgba(148,163,184,.8);flex:1;white-space:nowrap;}
+.cump-val{font-weight:700;font-variant-numeric:tabular-nums;min-width:44px;text-align:right;}
+.cump-bar-track{flex:1.2;height:6px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;}
+.cump-bar-fill{height:100%;border-radius:999px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+
+/* Detalhamento table */
+.det-tbl{width:100%;border-collapse:collapse;}
+.det-tbl thead th{
+  font-size:9px;text-transform:uppercase;letter-spacing:.7px;
+  color:rgba(100,116,139,.8);padding:4px 6px 10px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  font-weight:700;text-align:right;white-space:nowrap;
+}
+.det-tbl thead th:first-child{text-align:left}
+.det-tbl tbody td{
+  padding:9px 6px;font-size:12.5px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  text-align:right;color:rgba(226,232,240,.9);
+}
+.det-tbl tbody td:first-child{text-align:left;color:rgba(148,163,184,.8);}
+.det-tbl tbody tr:last-child td{border-bottom:none}
+
+@media(max-width:1100px){.prod-grid-new{grid-template-columns:1fr}}
+
+
+/* Blue neon glow effect */
+.app::before{
+  content:'';position:fixed;top:-200px;left:-100px;
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(56,189,248,.07) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+.main{position:relative;z-index:1;}
+.sb{position:relative;z-index:2;}
+
+
+/* ═══ COD.HTML VISUAL DESIGN — Metas AIH's Module ═══════════ */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:22px;}
+.kpi-card{
+  background:rgba(10,18,36,.84);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:20px;padding:22px;
+  box-shadow:0 4px 20px rgba(0,0,0,.45);
+}
+.kpi-card .kpi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.kpi-card .kpi-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--txt2);}
+.kpi-card .kpi-icon{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.kpi-card .kpi-value{font-size:52px;font-family:var(--fh);font-weight:800;letter-spacing:-2px;}
+
+.main-grid{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start;}
+.left-col{display:flex;flex-direction:column;gap:0;}
+
+.data-card{
+  background:rgba(10,18,36,.84);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:22px;overflow:hidden;
+  margin-bottom:18px;
+  box-shadow:0 4px 20px rgba(0,0,0,.35);
+}
+.data-card:last-child{margin-bottom:0;}
+.data-card-header{
+  padding:18px 22px;
+  background:rgba(7,18,38,.75);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  font-family:var(--fh);font-weight:700;font-size:17px;color:#f1f5f9;
+}
+.data-table{width:100%;border-collapse:collapse;}
+.data-table thead{background:rgba(12,33,66,.88);}
+.data-table th{padding:13px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--txt2);text-align:left;border-bottom:1px solid rgba(255,255,255,.05);}
+.data-table td{padding:15px 14px;font-size:13.5px;border-top:1px solid rgba(255,255,255,.04);color:#e2e8f0;}
+.data-table td.tc{text-align:center;}
+.data-table tbody tr:hover{background:rgba(56,189,248,.05);}
+.data-table .tr-total{background:rgba(56,189,248,.08);font-weight:700;}
+.data-table .tr-total td{color:#f1f5f9;}
+.data-table .tr-total td:first-child{color:#67e8f9;}
+.data-table .tr-sub td:first-child{padding-left:28px;color:rgba(148,163,184,.8);}
+.data-table .dred{color:#f87171!important;font-weight:600;}
+.data-table .dgreen{color:#4ade80!important;font-weight:600;}
+
+.right-col{display:flex;flex-direction:column;gap:18px;}
+.side-panel{background:rgba(10,18,36,.84);border:1px solid rgba(255,255,255,.06);border-radius:22px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.35);}
+.side-panel-header{padding:17px 22px;font-family:var(--fh);font-weight:700;font-size:16px;color:#f1f5f9;border-bottom:1px solid rgba(255,255,255,.05);}
+.side-panel-body{padding:8px 22px 18px;}
+.side-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13.5px;}
+.side-row:last-child{border-bottom:none;}
+.side-row span{color:var(--txt2);}
+.side-row strong{font-weight:600;color:#f1f5f9;}
+.prog-group{margin-bottom:18px;}
+.prog-group:last-child{margin-bottom:0;}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;}
+.prog-top span{color:var(--txt2);}
+.prog-top strong{font-weight:700;color:#f1f5f9;}
+.prog-track{height:7px;border-radius:999px;background:#1a2941;overflow:hidden;}
+.prog-fill{height:100%;border-radius:999px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+@media(max-width:1200px){.main-grid{grid-template-columns:1fr;}.kpis{grid-template-columns:repeat(2,1fr);}}
+
+
+/* ═══ LOGIN ════════════════════════════════════════════════ */
+#login-screen{position:fixed;inset:0;z-index:99999;background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50%,#020a18 100%);display:flex;align-items:center;justify-content:center;font-family:var(--fb);}
+.login-box{background:rgba(17,24,39,.85);border:1px solid rgba(59,130,246,.25);border-radius:20px;padding:44px 40px 36px;width:360px;box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04);backdrop-filter:blur(16px);text-align:center;}
+.login-logo{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#3B82F6,#8B5CF6);display:grid;place-items:center;margin:0 auto 16px;font-family:var(--fh);font-size:20px;font-weight:800;color:#fff;box-shadow:0 0 24px rgba(59,130,246,.4);}
+.login-title{font-family:var(--fh);font-size:20px;font-weight:800;color:var(--txt);margin-bottom:4px}
+.login-sub{font-size:11px;color:var(--txt3);margin-bottom:30px;letter-spacing:.3px}
+.login-field{margin-bottom:14px;text-align:left}
+.login-field label{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--txt3);margin-bottom:6px}
+.login-field input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;font-family:var(--fb);font-size:13px;color:var(--txt);outline:none;transition:border-color .2s,box-shadow .2s;}
+.login-field input:focus{border-color:rgba(59,130,246,.5);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+.login-btn{width:100%;margin-top:10px;background:linear-gradient(135deg,#3B82F6,#6366F1);color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--fh);font-size:14px;font-weight:700;cursor:pointer;transition:opacity .18s,transform .18s;letter-spacing:.2px;}
+.login-btn:hover{opacity:.9;transform:translateY(-1px)}
+.login-err{margin-top:12px;font-size:11.5px;color:var(--red);background:var(--red-d);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:8px 12px;display:none;}
+.login-err.show{display:block}
+.login-footer{margin-top:22px;font-size:10px;color:var(--txt3)}
+
+/* ═══ MODAL SENHA ══════════════════════════════════════════ */
+#pwd-modal{position:fixed;inset:0;z-index:99998;background:rgba(2,8,23,.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}
+#pwd-modal.show{display:flex;}
+.pwd-box{background:rgba(17,24,39,.95);border:1px solid rgba(59,130,246,.3);border-radius:18px;padding:36px 32px 28px;width:320px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.7);}
+.pwd-ico{font-size:32px;margin-bottom:10px;}
+.pwd-title{font-family:var(--fh);font-size:17px;font-weight:800;color:var(--txt);margin-bottom:4px;}
+.pwd-sub{font-size:11px;color:var(--txt3);margin-bottom:20px;}
+.pwd-input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;font-size:18px;color:var(--txt);text-align:center;letter-spacing:6px;outline:none;font-family:var(--fh);font-weight:700;transition:border-color .2s;}
+.pwd-input:focus{border-color:rgba(59,130,246,.5);}
+.pwd-err{font-size:11px;color:var(--red);margin-top:8px;min-height:16px;}
+.pwd-btns{display:flex;gap:8px;margin-top:16px;}
+.pwd-ok{flex:1;background:linear-gradient(135deg,#3B82F6,#6366F1);color:#fff;border:none;border-radius:9px;padding:10px;font-family:var(--fh);font-size:13px;font-weight:700;cursor:pointer;}
+.pwd-ok:hover{opacity:.9;}
+.pwd-cancel{flex:1;background:transparent;border:1px solid rgba(255,255,255,.1);color:var(--txt3);border-radius:9px;padding:10px;font-size:12px;cursor:pointer;}
+.pwd-cancel:hover{background:rgba(255,255,255,.05);}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="pwd-modal">
+  <div class="pwd-box">
+    <div class="pwd-ico">🔒</div>
+    <div class="pwd-title" id="pwd-modname">Acesso Restrito</div>
+    <div class="pwd-sub">Digite a senha para acessar este módulo</div>
+    <input class="pwd-input" type="password" id="pwd-input" maxlength="10" placeholder="••••">
+    <div class="pwd-err" id="pwd-err"></div>
+    <div class="pwd-btns">
+      <button class="pwd-cancel" onclick="closePwd()">Cancelar</button>
+      <button class="pwd-ok" onclick="confirmPwd()">Confirmar</button>
+    </div>
+  </div>
+</div>
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">SC</div>
+    <div class="login-title">Painel SUS</div>
+    <div class="login-sub">Santa Casa · Montes Claros · Controladoria</div>
+    <div class="login-field">
+      <label>Login</label>
+      <input type="text" id="lg-user" placeholder="Digite seu login" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label>Senha</label>
+      <input type="password" id="lg-pass" placeholder="Digite sua senha" autocomplete="current-password">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-err" id="lg-err">Login ou senha incorretos.</div>
+    <div class="login-footer">Acesso restrito · Faturamento / Controladoria</div>
+  </div>
+</div>
+<div id="ld">
+  <div class="ld-logo" style="background:none;padding:0;overflow:hidden"><img src="data:image/jpeg;base64,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" style="width:56px;height:56px;object-fit:cover;border-radius:16px"></div>
+  <div class="ld-bar"><div class="ld-bar-fill" id="ldbar"></div></div>
+  <div id="ld-txt">Iniciando sistema...</div>
+</div>
+
+<div class="app">
+<!-- ═══ SIDEBAR ═══════════════════════════════════════════════ -->
+<aside class="sb" id="sb">
+  <div class="sb-toggle" id="sbToggle" onclick="toggleSb()">‹</div>
+  <div class="sb-brand">
+    <div class="sb-logo" style="background:none;padding:0;overflow:hidden"><img src="data:image/jpeg;base64,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" style="width:36px;height:36px;object-fit:cover;border-radius:10px"></div>
+    <div class="sb-name"><div class="n1">Santa Casa</div><div class="n2">Montes Claros</div></div>
+  </div>
+  <div class="sb-sep">Módulos</div>
+  <nav class="sb-nav">
+    <div class="si on" data-m="0" onclick="goMod(0)"><div class="ic">📊</div><span class="si-lbl">Metas AIH's</span></div>
+    <div class="si" data-m="1" onclick="goMod(1)"><div class="ic">💰</div><span class="si-lbl">Valores por AIH's</span></div>
+    <div class="si" data-m="2" onclick="goMod(2)"><div class="ic">🏥</div><span class="si-lbl">Diárias de UTI</span></div>
+    <div class="si dim" data-m="3" onclick="goMod(3)" style="pointer-events:auto;opacity:.6"><div class="ic">📋</div><span class="si-lbl">Contratos</span></div>
+    <div class="si dim" data-m="4" onclick="goMod(4)" style="pointer-events:auto;opacity:.6"><div class="ic">📈</div><span class="si-lbl">Relatórios</span></div>
+    <div class="si dim" data-m="5" onclick="goMod(5)" style="pointer-events:auto;opacity:.6"><div class="ic">⚙️</div><span class="si-lbl">Configurações</span></div>
+  </nav>
+  <!-- Filtros removidos conforme solicitado -->
+
+</aside>
+
+<!-- ═══ MAIN ════════════════════════════════════════════════ -->
+<div class="main">
+  <div class="header">
+    <div class="h-left">
+      <div class="h-title">Painel SUS</div>
+      <div class="h-pill" id="hPill">Metas AIH's</div>
+      <div class="h-pill" id="hComp" style="background:var(--pur-d);color:var(--pur);border-color:rgba(139,92,246,.25);display:none"></div>
+    </div>
+    <div class="h-right">
+      <div class="h-upd">
+        <div class="h-upd-lbl">Última atualização</div>
+        <div class="h-upd-val" id="upT">—</div>
+        <div class="h-upd-nxt" id="upN"></div>
+      </div>
+      <span class="rcnt" id="rcnt" style="display:none"></span>
+      <button class="btn-exp" onclick="doExport()">↓ Exportar CSV</button>
+    </div>
+  </div>
+
+  <div class="scrl" id="scrl">
+
+  <!-- ════ MÓDULO 0 — METAS AIH's ════════════════════════════ -->
+  <div class="mod on" id="mod0">
+
+    <!-- KPIs -->
+    <div class="kpis" id="kpi0"></div>
+
+    <!-- Main 2-col grid -->
+    <div class="main-grid">
+
+      <!-- LEFT: tabelas de produção -->
+      <div class="left-col">
+
+        <!-- PAINEL SUS PRODUÇÃO -->
+        <div class="data-card">
+          <div class="data-card-header">PAINEL SUS &ndash; PRODUÇÃO MV2000</div>
+          <div style="overflow-x:auto">
+            <table class="data-table" style="min-width:780px" id="tblPainel">
+              <thead><tr>
+                <th style="min-width:200px">GRUPO DE PROCEDIMENTOS</th>
+                <th class="tc">PRODUÇÃO TOTAL</th>
+                <th class="tc">TOTAL DA CONTA</th>
+                <th class="tc">CONTRATO</th>
+                <th class="tc">VALOR</th>
+                <th class="tc">DIF</th>
+                <th class="tc">VALOR (DIF)</th>
+              </tr></thead>
+              <tbody id="tbMain"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ALTA COMPLEXIDADE -->
+        <div class="data-card">
+          <div class="data-card-header">ALTA COMPLEXIDADE - MAC</div>
+          <div style="overflow-x:auto">
+            <table class="data-table" style="min-width:780px">
+              <tbody id="tbAlta"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- DIÁRIAS DE UTI -->
+        <div class="data-card">
+          <div class="data-card-header">DIÁRIAS DE UTI</div>
+          <div style="overflow-x:auto">
+            <table class="data-table" style="min-width:780px">
+              <thead><tr>
+                <th style="min-width:200px">TIPO DE UTI</th>
+                <th class="tc">PRODUÇÃO TOTAL</th>
+                <th class="tc">TOTAL DA CONTA</th>
+                <th class="tc">CONTRATO</th>
+                <th class="tc">VALOR</th>
+                <th class="tc">DIF</th>
+                <th class="tc">VALOR (DIF)</th>
+              </tr></thead>
+              <tbody id="tbUTI"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /left col -->
+
+      <!-- RIGHT: painéis laterais -->
+      <div class="right-col">
+
+        <!-- DETALHAMENTO DA PRODUÇÃO -->
+        <div class="side-panel">
+          <div class="side-panel-header">DETALHAMENTO DA PRODUÇÃO</div>
+          <div class="side-panel-body" id="detDiv"></div>
+        </div>
+
+        <!-- CUMPRIMENTO DE INCENTIVO -->
+        <div class="side-panel">
+          <div class="side-panel-header">CUMPRIMENTO DE INCENTIVO</div>
+          <div class="side-panel-body" id="cumpDiv"></div>
+        </div>
+
+      </div><!-- /right col -->
+
+    </div><!-- /main-grid -->
+
+    <div class="foot" style="margin-top:12px">Valores financeiros exibidos em Reais (R$).</div>
+
+  </div><!-- /mod0 -->
+
+  <!-- ════ MÓDULO 1 — VALORES POR AIH's ══════════════════════ -->
+  <div class="mod" id="mod1">
+    <div class="krow krow-sm" id="kpi1"></div>
+    <div class="cg c12">
+      <div class="cc fade-in">
+        <div class="ct">Faturamento por Especialidade</div>
+        <div class="cs">Total Conta R$ — composição por grupo clínico</div>
+        <div id="ch4" style="height:240px"></div>
+      </div>
+      <div class="cc fade-in">
+        <div class="ct">Custo Médio de Faturamento por Especialidade</div>
+        <div class="cs">Valor R$ médio por AIH — comparativo entre especialidades</div>
+        <div id="ch5" style="height:240px"></div>
+      </div>
+    </div>
+    <div class="sh">Ranking de Procedimentos <span class="tag tag-b">R_PROD_FINANCIAMENTO · Top 15</span></div>
+    <div class="cg c2">
+      <div class="cc fade-in">
+        <div class="ct">Mais Realizados — Quantidade</div>
+        <div class="cs">Procedimentos por nº de AIH's — col. E da planilha R_PROD_FINANCIAMENTO</div>
+        <div id="rkQ" style="max-height:310px;overflow-y:auto;padding-right:2px"></div>
+      </div>
+      <div class="cc fade-in">
+        <div class="ct">Mais Rentáveis — Faturamento R$</div>
+        <div class="cs">Procedimentos por Total Conta — col. H da planilha R_PROD_FINANCIAMENTO</div>
+        <div id="rkV" style="max-height:310px;overflow-y:auto;padding-right:2px"></div>
+      </div>
+    </div>
+    <div class="cc fade-in" style="margin-top:14px">
+      <div class="ct">Caráter de Atendimento — Eletivo × Urgência (Colunas Agrupadas)</div>
+      <div class="cs">Realizado vs. Contratado — Eletivo (04/2026) e Urgência (05/2026)</div>
+      <div id="ch6" style="height:190px"></div>
+    </div>
+  </div>
+
+  <!-- ════ MÓDULO 2 — DIÁRIAS DE UTI ══════════════════════════ -->
+  <div class="mod" id="mod2">
+    <div class="sh">Indicadores de UTI <span class="tag tag-g">Período Atual</span></div>
+    <div class="ubg" id="ubg"></div>
+    <div class="sh">Desempenho Detalhado por Tipo de UTI <span class="tag tag-a">Diárias vs. Contrato</span></div>
+    <div class="twrap"><table><thead><tr>
+      <th style="text-align:left">Tipo de UTI</th>
+      <th>Diárias Real.</th><th>Contrato</th><th>Total R$</th>
+      <th>Meta R$</th><th>Dif. Diárias</th><th>Dif. R$</th><th style="min-width:118px">%</th>
+    </tr></thead><tbody id="tbU2"></tbody></table></div>
+    <div class="cg c2">
+      <div class="cc fade-in"><div class="ct">Distribuição de Diárias por Tipo de UTI</div><div class="cs">Adulto · Pediátrica · Neonatal · Queimados</div><div id="ch7" style="height:240px"></div></div>
+      <div class="cc fade-in"><div class="ct">Realizado × Contrato por UTI</div><div class="cs">Diárias realizadas vs. diárias contratadas</div><div id="ch8" style="height:240px"></div></div>
+    </div>
+    <div class="cg c2">
+      <div class="cc fade-in"><div class="ct">Meta de Diárias Mensais UTI</div><div class="cs">Projeção de contratos UTI ao longo do ano</div><div id="ch9" style="height:200px"></div></div>
+      <div class="cc fade-in"><div class="ct">Custo Médio por Diária de UTI</div><div class="cs">Valor R$ por diária realizada por tipo</div><div id="ch10" style="height:200px"></div></div>
+    </div>
+  </div>
+
+  <div class="foot">Fonte: Sistema MV2000 / DATASUS · Santa Casa de Montes Claros · Controladoria · v5.0</div>
+  </div><!-- /scrl -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   ⚙  C O N F I G U R A Ç Ã O  — Edite apenas esta seção
+═══════════════════════════════════════════════════════════════ */
+var CFG = {
+
+  // ─── 1. CSV DA ABA RESUMO (publicado no Google Sheets) ────────
+  //   Arquivo → Publicar na Web → selecione a aba RESUMO → CSV → Copiar
+  URL_RESUMO: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQzrx-9uCAD-Vih8xXxxoY1QPTLbjpFmpHuW6Pl9wn0IK_OwLbn0LWh7MebaoMbpGv0jSFqKldM-uef/pub?gid=865789917&single=true&output=csv',
+
+  // ─── 1b. SE O FETCH FALHAR NO GOOGLE SITES CORPORATIVO: ─────
+  //   1) Crie um Apps Script proxy (arquivo proxy_csv.gs fornecido)
+  //   2) Implante como App da Web (qualquer pessoa pode acessar)
+  //   3) Substitua URL_RESUMO pela URL do Apps Script gerada
+  //   Exemplo: URL_RESUMO: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQzrx-9uCAD-Vih8xXxxoY1QPTLbjpFmpHuW6Pl9wn0IK_OwLbn0LWh7MebaoMbpGv0jSFqKldM-uef/pub?gid=865789917&single=true&output=csv',
+
+  // ─── 2. CSV DA ABA R_PROD_FINANCIAMENTO (para ranking) ────────
+  //   No Google Sheets, selecione a aba R_PROD_FINANCIAMENTO e publique como CSV.
+  //   Copie o link e cole aqui. Deixe '' para usar dados locais.
+  URL_PRODUCAO: '',
+
+  // ─── 3. Horário de atualização diária ─────────────────────────
+  UPD_H: 14,   // 14:00 — única atualização do dia
+
+  // ─── 4. Timeout de rede (ms) ──────────────────────────────────
+  TIMEOUT: 14000,
+
+  // ─── 5. Metas mensais Jan–Dez ─────────────────────────────────
+  MM: [1668,1804,1414,1562,1498,1427,1635,1494,1493,1726,1103,2059],
+  MS: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+};
+/* ═══════════════════════════════════════════════════════════════
+   FIM DA CONFIGURAÇÃO
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Formatters ── */
+function BRL(v){return 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function BRLk(v){var n=Number(v||0);return n>=1e6?'R$ '+(n/1e6).toFixed(2).replace('.',',')+' Mi':n>=1e3?'R$ '+(n/1e3).toFixed(1).replace('.',',')+' mil':BRL(n);}
+function Ni(v){return Number(v||0).toLocaleString('pt-BR');}
+function pct(a,b){return b?(a/b)*100:0;}
+// Parse numbers robusto: "R$ 1.234,56" / "(78.007,30)" / "1234.56" / "0.747"
+function toN(v){
+  if(v===null||v===undefined||v==='') return 0;
+  var s=String(v).trim().replace(/"/g,'');
+  // Detecta negativo: "(1.234,56)" ou "-R$ 1.234,56" ou "R$ -1.234,56"
+  var neg=false;
+  if(s.charAt(0)==='('&&s.charAt(s.length-1)===')'){neg=true;s=s.slice(1,-1).trim();}
+  else if(s.charAt(0)==='-'){neg=true;s=s.slice(1).trim();}
+  // Remove prefixo R$, $
+  s=s.replace(/^R\.?\$\s*/,'').replace(/^\$\s*/,'').trim();
+  if(s.charAt(0)==='-'){neg=!neg;s=s.slice(1).trim();}
+  // Remove sufixo %
+  s=s.replace(/%$/,'').trim();
+  if(!s) return 0;
+  // "0.747", "0.34", "1.5" → decimal US (parte inteira 1 dígito + ponto + qualquer nº decimal)
+  if(s.match(/^\d\.\d+$/)&&s.length<=8){
+    return parseFloat(s) * (neg?-1:1)||0;
+  }
+  // Formato brasileiro "1.234,56" (ponto=milhar, vírgula=decimal)
+  if(s.match(/^\d{1,3}(\.\d{3})+(,\d+)?$/)){
+    s=s.replace(/\./g,'').replace(',','.');
+  }
+  // "1234,56" (sem milhar, vírgula=decimal)
+  else if(s.match(/^\d+(,\d{1,2})$/)&&!s.includes('.')){
+    s=s.replace(',','.');
+  }
+  var r=parseFloat(s)||0;
+  return neg?-r:r;
+}
+
+/* ── State ── */
+var RSD=null;   // RESUMO data object
+var PROD_RK=null; // R_PROD rankings
+var AC={};       // ApexCharts instances
+var FILT_COMPL='', FILT_FINANC='';
+
+/* ── Loading progress ── */
+function setLd(txt,prog){
+  try{document.getElementById('ld-txt').textContent=txt;if(prog!=null)document.getElementById('ldbar').style.width=prog+'%';}catch(e){}
+}
+
+/* ── Load CSV — 3 tentativas para máxima compatibilidade
+   (Google Sites corporativo bloqueia XHR mas permite fetch e Apps Script) ── */
+function loadCSVPapa(url){
+
+  // Se a URL já é um Apps Script (script.google.com), usa direto
+  var isAppsScript = url.indexOf('script.google.com') >= 0;
+
+  // ── Tentativa 1: fetch() com CORS ─────────────────────────
+  return fetch(url, {mode:'cors', cache:'no-cache'})
+    .then(function(resp){
+      if(!resp.ok) throw new Error('HTTP '+resp.status);
+      return resp.text();
+    })
+    .then(function(txt){
+      if(!txt||txt.trim().length<10) throw new Error('Resposta vazia');
+      var r = Papa.parse(txt, {header:false, skipEmptyLines:false});
+      if(!r.data||r.data.length<3) throw new Error('Dados insuficientes');
+      return r.data;
+    })
+    .catch(function(e1){
+      console.warn('[SC] fetch/cors falhou:',e1.message);
+      if(isAppsScript) throw e1; // Apps Script falhou, para aqui
+
+      // ── Tentativa 2: fetch() sem CORS (no-cors) ───────────
+      // Não funciona para ler dados, mas abre o fluxo
+      // Vai direto para tentativa 3
+      console.warn('[SC] Tentando PapaParse download...');
+
+      // ── Tentativa 3: PapaParse download:true ──────────────
+      return new Promise(function(res, rej){
+        Papa.parse(url, {
+          download:true,
+          header:false,
+          skipEmptyLines:false,
+          complete: function(r){
+            if(r.data && r.data.length >= 3) res(r.data);
+            else rej(new Error('PapaParse: dados insuficientes'));
+          },
+          error: function(e){ rej(new Error('PapaParse: '+(e.message||'erro desconhecido'))); }
+        });
+      });
+    });
+}
+
+/* ── CSV parser → 2D array ── */
+function csvToGrid(text){
+  var lines=text.split(/\r?\n/),grid=[];
+  lines.forEach(function(line){
+    var row=[],cur='',q=false;
+    for(var i=0;i<line.length;i++){
+      var c=line[i];
+      if(c==='"')q=!q;
+      else if(c===','&&!q){row.push(cur.trim());cur='';}
+      else cur+=c;
+    }
+    row.push(cur.trim());
+    grid.push(row);
+  });
+  return grid;
+}
+// Get cell value from 1-based row/col
+function gc(grid,row,col){
+  var r=grid[row-1];
+  if(!r) return null;
+  var v=r[col-1];
+  return (v!==undefined&&v!==null&&v!=='')?String(v).replace(/^"|"$/g,'').trim():null;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PARSE RESUMO CSV → data object
+   Mapeamento fiel às células especificadas pelo usuário
+═══════════════════════════════════════════════════════════════ */
+function parseResumo(g){
+  // ── AUTO-DETECÇÃO: verifica se é a aba RESUMO ────────────────
+  var a1=(gc(g,1,1)||'').toLowerCase();
+  var a2=(gc(g,2,1)||'').toLowerCase();
+  var a4=(gc(g,4,1)||'').toLowerCase();
+  var a5=(gc(g,5,1)||'').toLowerCase();
+
+  // Marcadores ÚNICOS da aba RESUMO (não existem nas outras abas)
+  var a2=(gc(g,2,1)||'').toLowerCase();
+  var isResumo = a1.includes('painel sus') ||
+                 a2.includes('média complexidade') ||
+                 a2.includes('media complexidade') ||
+                 a2.includes('competência principal') ||
+                 a2.includes('competencia principal');
+
+  // Validação: Meta Mensal (B27) deve estar entre 500-8000
+  if(isResumo){
+    var chkMeta=toN(gc(g,27,2));
+    if(chkMeta<500||chkMeta>8000){
+      // fallback: also try old structure
+      var chkOld=toN(gc(g,2,9));
+      if(chkOld>=500&&chkOld<=8000){isResumo=true;}
+      else{isResumo=false;}
+    }
+  }
+
+  if(!isResumo){
+    console.warn('[SC] CSV não é a aba RESUMO. Publique somente a aba RESUMO como CSV.');
+    // Mostra aviso visual
+    try{
+      var w=document.getElementById('warnBanner');
+      if(w){
+        w.style.display='block';
+        w.style.color='#F59E0B';
+        w.style.borderColor='rgba(245,158,11,.35)';
+        w.style.background='rgba(245,158,11,.08)';
+        w.innerHTML='⚠ <strong>CSV incorreto — aba R_DEMONS detectada em vez de RESUMO.</strong><br><br>'
+          +'Para corrigir: no Google Sheets, clique na aba <strong>RESUMO</strong> e veja o número <code>gid=XXXXX</code> na barra de endereço. '
+          +'Adicione <code>&gid=XXXXX&single=true</code> no link CSV e atualize <strong>CFG.URL_RESUMO</strong>.<br>'
+          +'Exemplo: <code>...pub?output=csv&gid=1135811681&single=true</code>';
+      }
+    }catch(x){}
+    return null; // dispara fallback para dados demo
+  }
+
+  // Detecta competência da linha 2 col A
+  var comp=gc(g,2,1)||'';
+  var compM=comp.match(/principal[:\s]+(\d{2}\/\d{4})/i);
+  var competencia=compM?compM[1]:'';
+
+  // ── Nova estrutura RESUMO (leitura direta por linha/coluna) ─────
+  // Row 4-9:  MÉDIA COMPLEXIDADE (cols B-G)
+  // Row 11:   ALTA COMPLEXIDADE  (cols B-G)
+  // Row 14-18: DIÁRIAS DE UTI    (cols B-G)
+  // Row 21-24: DETALHAMENTO DA PRODUÇÃO (cols B-C)
+  // Row 26-28: CUMPRIMENTO DE INCENTIVO (col B)
+
+  function rv(r,c){ return toN(gc(g,r,c)); }
+  function rs(r,c){ return (gc(g,r,c)||'').trim(); }
+
+  // KPIs
+  var prod_geral = rv(26,2);   // B26: Total AIHs Realizadas
+  var meta_aih   = rv(27,2);   // B27: Meta Mensal
+  var diferenca_raw = rv(28,2);
+  // Se vazio, calcula: prod - meta
+  var diferenca = diferenca_raw ? ((diferenca_raw > 0 && prod_geral < meta_aih) ? -diferenca_raw : diferenca_raw)
+                               : (prod_geral - meta_aih);
+  // Sempre calcular ating_pct (B29 pode ter formatação inconsistente ex: "74.7%"→7470%)
+  var ating_pct = meta_aih ? prod_geral/meta_aih : 0;
+
+  // Competência da linha 1 ou 2
+  var comp=(gc(g,1,1)||gc(g,2,1)||'');
+  var compM=comp.match(/(\d{2}\/\d{4})/);
+  var competencia=compM?compM[1]:'05/2026';
+
+  // ── MÉDIA COMPLEXIDADE (rows 4-9) ────────────────────────────
+  // R4: CIRURGICA pode ser linha-label sem dados
+  var cir_real=rv(4,2);
+  var cir ={real:cir_real,val:rv(4,3),contr:rv(4,4),meta:rv(4,5),dif:rv(4,6),gval:rv(4,7),
+            lbl:rs(4,1)||'CIRURGICA', labelOnly: cir_real===0&&rv(4,3)===0};
+  var elet={real:rv(5,2),val:rv(5,3),contr:rv(5,4),meta:rv(5,5),dif:rv(5,6),gval:rv(5,7),lbl:rs(5,1)};
+  var urg ={real:rv(6,2),val:rv(6,3),contr:rv(6,4),meta:rv(6,5),dif:rv(6,6),gval:rv(6,7),lbl:rs(6,1)};
+  var cli ={real:rv(7,2),val:rv(7,3),contr:rv(7,4),meta:rv(7,5),dif:rv(7,6),gval:rv(7,7),lbl:rs(7,1)};
+  var obs ={real:rv(8,2),val:rv(8,3),contr:rv(8,4),meta:rv(8,5),dif:rv(8,6),gval:rv(8,7),lbl:rs(8,1)};
+  // R9 mTot: B e C podem estar vazios (formula error) — calcula da soma das linhas acima
+  var mTot_real=rv(9,2)||( (elet.real||0)+(urg.real||0)+(cli.real||0)+(obs.real||0) );
+  var mTot_val =rv(9,3)||( (elet.val||0)+(urg.val||0)+(cli.val||0)+(obs.val||0) );
+  var mTot_dif =rv(9,6)||( (elet.dif||0)+(urg.dif||0)+(cli.dif||0)+(obs.dif||0) );
+  var mTot_gval=rv(9,7)||( (elet.gval||0)+(urg.gval||0)+(cli.gval||0)+(obs.gval||0) );
+  var mTot={real:mTot_real,val:mTot_val,contr:rv(9,4),meta:rv(9,5),dif:mTot_dif,gval:mTot_gval,lbl:rs(9,1)};
+
+  // ── ALTA COMPLEXIDADE (row 11) ────────────────────────────────
+  var alta={real:rv(11,2),val:rv(11,3),contr:rv(11,4),meta:rv(11,5),dif:rv(11,6),gval:rv(11,7),lbl:rs(11,1)};
+
+  // ── UTI (rows 14-18) ──────────────────────────────────────────
+  var uti_a={dias:rv(14,2),val:rv(14,3),contr:rv(14,4),meta:rv(14,5),dif:rv(14,6),gval:rv(14,7),lbl:rs(14,1).replace(/\s*\[.*$/,'').replace(/\s*—.*$/,'').trim()};
+  var uti_p={dias:rv(15,2),val:rv(15,3),contr:rv(15,4),meta:rv(15,5),dif:rv(15,6),gval:rv(15,7),lbl:rs(15,1).replace(/\s*\[.*$/,'').replace(/\s*—.*$/,'').trim()};
+  var uti_n={dias:rv(16,2),val:rv(16,3),contr:rv(16,4),meta:rv(16,5),dif:rv(16,6),gval:rv(16,7),lbl:rs(16,1).replace(/\s*\[.*$/,'').replace(/\s*—.*$/,'').trim()};
+  var uti_q={dias:rv(17,2),val:rv(17,3),contr:rv(17,4),meta:rv(17,5),dif:rv(17,6),gval:rv(17,7),lbl:rs(17,1).replace(/\s*\[.*$/,'').replace(/\s*—.*$/,'').trim()};
+  var uti_t={dias:rv(18,2),val:rv(18,3),contr:rv(18,4),meta:rv(18,5),dif:rv(18,6),gval:rv(18,7),lbl:rs(18,1)};
+
+  // ── DETALHAMENTO DA PRODUÇÃO (rows 21-24) ─────────────────────
+  var n_faec=rv(21,2), tot_faec_val=rv(21,3);
+  var n_mac=rv(22,2),  tot_mac_val=rv(22,3);
+  var n_media=rv(23,2),tot_media_val_raw=rv(23,3);
+  var n_alta=rv(24,2), tot_alta_val=rv(24,3);
+  // R23 C pode ter erro de fórmula (valor 100x maior) — usar mTot.val como referência
+  var tot_media_val = (tot_media_val_raw > 0 && mTot && mTot.val && tot_media_val_raw > mTot.val*5)
+                       ? mTot.val : tot_media_val_raw;
+  var tot_val=tot_mac_val+tot_faec_val;
+
+  return {
+    competencia:competencia, meta_aih:meta_aih,
+    prod_geral:prod_geral, ating_pct:ating_pct, diferenca:diferenca,
+    // Produção por caráter e especialidade
+    cir:cir, elet:elet, urg:urg, cli:cli, obs:obs, mTot:mTot, alta:alta,
+    // UTI
+    uti:{adulto:uti_a, ped:uti_p, neo:uti_n, que:uti_q, total:uti_t},
+    // Detalhamento
+    n_faec:n_faec, tot_faec_val:tot_faec_val,
+    n_mac:n_mac, tot_mac_val:tot_mac_val,
+    n_media:n_media, tot_media_val:tot_media_val,
+    n_alta:n_alta, tot_alta_val:tot_alta_val,
+    tot_val:tot_val,
+    ticket:prod_geral?tot_val/prod_geral:0,
+  };
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PARSE R_PROD_FINANCIAMENTO CSV → rankings
+   Col E (index 4) = Procedimento | Col H (index 7) = Total Conta
+═══════════════════════════════════════════════════════════════ */
+function parseProducao(g){
+  // g já é uma grade 2D do PapaParse
+  var Q={},V={};
+  // Linha 5 = cabeçalho, dados começam na linha 6 (índice 5)
+  for(var i=5;i<g.length;i++){
+    var row=g[i];
+    var rawProc=row[4]||'';  // col E
+    var rawVal=row[7]||'';   // col H
+    // Remove código SUS de 10 dígitos no início
+    var proc=rawProc.trim().replace(/^\d{10}\s+/,'').trim();
+    if(!proc||proc.length<3||proc.toLowerCase().indexOf('competência')>=0||proc.toLowerCase().indexOf('procedimento')>=0) continue;
+    var val=toN(rawVal);
+    Q[proc]=(Q[proc]||0)+1;
+    V[proc]=(V[proc]||0)+val;
+  }
+  var tQ=Object.entries(Q).filter(function(e){return !e[0].match(/^\d|remessa|página/i);}).sort(function(a,b){return b[1]-a[1];}).slice(0,15);
+  var tV=Object.entries(V).filter(function(e){return !e[0].match(/^\d|remessa|página/i);}).sort(function(a,b){return b[1]-a[1];}).slice(0,15);
+  return {tQ:tQ,tV:tV};
+}
+
+/* ── Demo fallback data (valores reais da planilha) ── */
+function demoResumo(){
+  var c=function(r,v,co,m,d,g,l){return{real:r,val:v,contr:co,meta:m,dif:d,gval:g,lbl:l};};
+  var u=function(r,v,co,m,d,g,l){return{dias:r,val:v,contr:co,meta:m,dif:d,gval:g,lbl:l};};
+  return{
+    competencia:'07/2026',meta_aih:1635,prod_geral:1608,ating_pct:0.9835,diferenca:-27,
+    cir: {lbl:'CIRURGICA',labelOnly:true,real:0,val:0,contr:0,meta:0,dif:0,gval:0},
+    elet:c(157, 163039.34,  82,  61471.63,   75,  101567.71,'Eletivo'),
+    urg: c(317, 683218.01, 344, 554200.76,  -27,  129017.25,'Urgencia'),
+    cli: c(595,1060641.47, 360, 472909.04,  235,  587732.43,'CLÍNICO/PEDIATRIA'),
+    obs: c(167, 142678.96, 303, 247857.03, -136, -105178.07,'OBSTETRÍCIA'),
+    mTot:c(1236,2049577.78,1089,1336438.46, 147, 2049430.78,"Total AIH's de Média Complexidade - MAC"),
+    alta:c( 265,1596591.25, 229,1426994.18,  36,  169597.07,"Total AIH's de  ALTA COMPLEXIDADE - MAC"),
+    uti:{
+      adulto:u(346, 266198.56,330,253888.80,  16,  -12309.76,'Diaria UTI ADULTO (UTI II)'),
+      ped:   u(433, 360273.32, 30, 24961.20, 403, -335312.12,'Diaria UTI PEDIATRICA (UTI II)'),
+      neo:   u(251, 225116.88,210,188344.80,  41,  -36772.08,'Diaria UTI NEONATAL UTIN (TIPO II)'),
+      que:   u(  3,   2100.00, 30, 21000.00, -27,   18900.00,'QUEIMADOS'),
+      total: u(1033,853688.76,600,488194.80, 433, -365493.96,'Total Geral de DIARIAS DE UTI'),
+    },
+    n_faec:107,  tot_faec_val:1311444.33,
+    n_mac:1236,  tot_mac_val:2049577.78,
+    n_media:1236,tot_media_val:2049577.78,
+    n_alta:265,  tot_alta_val:1596591.25,
+    tot_val:4957613.36,ticket:3082.47,
+  };
+}
+function demoProducao(){
+  return {
+    tQ:[
+      ['DEBRIDAMENTO DE ULCERA / DE T',39],['DIAGNOSTICO E/OU ATENDIMENTO',33],
+      ['PARTO NORMAL',28],['OPERAÇÃO CESARIANA EM GESTA',22],
+      ['TRATAMENTO CLÍNICO DE PACIENT',21],['TRATAMENTO DE INTERCORRÊNCI',17],
+      ['PARTO NORMAL EM GESTAÇÃO DE',16],['TRATAMENTO CONSERVADOR DE T',14],
+      ['TRATAMENTO DE OUTRAS DOENCA',13],['ESVAZIAMENTO DE UTERO POS-AB',13],
+      ['TRATAMENTO DE OUTRAS DOENÇA',12],['OPERAÇÃO CESARIANA COM LAQU',11],
+      ['TRATAMENTO CIRÚRGICO DE FRAT',9],['TRATAMENTO DE ACIDENTE VASCU',8],
+      ['TRATAMENTO DE INTERCORRENCI',8]
+    ],
+    tV:[
+      ['REVASCULARIZAÇÃO MIOCÁRDICA',60240.02],['DEBRIDAMENTO DE ULCERA / DE T',56472.33],
+      ['TRATAMENTO DE OUTRAS DOENCA',55765.54],['TRANSPLANTE DE RIM (ORGAO DE',41704.33],
+      ['TRATAMENTO DE OUTRAS DOENÇA',41399.76],['TROCA VALVAR C/ REVASCULARIZA',26955.84],
+      ['IMPLANTE DE MARCAPASSO DE CÂ',26556.21],['PLÁSTICA VALVAR E/OU TROCA VA',26106.01],
+      ['TRATAMENTO DE TRANSTORNOS R',24047.06],['TRANSPLANTE AUTOGENICO DE CE',23531.23],
+      ['OPERAÇÃO CESARIANA EM GESTA',23321.62],['TRANSPLANTE AUTOGENICO DE CE',23091.87],
+      ['TRATAMENTO DE INTERCORRENCI',22523.35],['DERIVAÇÃO VENTRICULAR EXTERN',22094.70],
+      ['TRATAMENTO DE ACIDENTE VASCU',19025.82]
+    ]
+  };
+}
+
+/* ── Update time (somente 14:00) ── */
+function initTime(){
+  try{
+    var now=new Date();
+    var today=new Date(now.getFullYear(),now.getMonth(),now.getDate(),CFG.UPD_H,0,0);
+    var last,next;
+    if(now>=today){last=today;var nx=new Date(today);nx.setDate(nx.getDate()+1);next=nx;}
+    else{var yd=new Date(today);yd.setDate(yd.getDate()-1);last=yd;next=today;}
+    document.getElementById('upT').textContent=last.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    document.getElementById('upN').textContent='Próxima: '+next.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  }catch(e){}
+}
+
+/* ── Filters ── */
+function applyF(){
+  FILT_COMPL=document.getElementById('fC').value;
+  FILT_FINANC=document.getElementById('fF').value;
+  renderAll();
+}
+function clearF(){
+  document.getElementById('fC').value='';
+  document.getElementById('fF').value='';
+  FILT_COMPL='';FILT_FINANC='';
+  renderAll();
+}
+
+/* ── Sidebar toggle ── */
+var sbC=false;
+function toggleSb(){
+  sbC=!sbC;
+  document.getElementById('sb').classList.toggle('collapsed',sbC);
+  document.getElementById('sbToggle').textContent=sbC?'›':'‹';
+}
+
+/* ── Module switch ── */
+var MNAMES=['Metas AIH\'s','Valores por AIH\'s','Diárias de UTI'];
+var _PWD='3643';
+var _PWD_MODS={1:true,2:true,3:true,4:true,5:true};
+var _PWD_TARGET=0;
+function _isUnlocked(m){try{return sessionStorage.getItem('sc_unlock_'+m)==='1';}catch(x){return false;}}
+function _unlock(m){try{sessionStorage.setItem('sc_unlock_'+m,'1');}catch(x){}}
+function goMod(i){
+  if(_PWD_MODS[i]&&!_isUnlocked(i)){
+    _PWD_TARGET=i;
+    var names=["Metas AIHs","Valores por AIHs","Dias de UTI","Contratos","Relatorios","Configuracoes"];
+    var el=document.getElementById('pwd-modname');
+    if(el) el.textContent=names[i]||'Módulo Restrito';
+    var inp=document.getElementById('pwd-input');
+    if(inp) inp.value='';
+    var err=document.getElementById('pwd-err');
+    if(err) err.textContent='';
+    var modal=document.getElementById('pwd-modal');
+    if(modal){modal.classList.add('show');setTimeout(function(){if(inp)inp.focus();},80);}
+    return;
+  }
+  document.querySelectorAll('.mod').forEach(function(m,j){m.classList.toggle('on',j===i);});
+  document.querySelectorAll('.si[data-m]').forEach(function(el,j){el.classList.toggle('on',j===i);});
+  try{document.getElementById('hPill').textContent=MNAMES[i]||'';}catch(e){}
+  try{document.getElementById('scrl').scrollTop=0;}catch(e){}
+}
+function confirmPwd(){
+  var inp=document.getElementById('pwd-input');
+  var v=inp?inp.value:'';
+  if(v===_PWD){_unlock(_PWD_TARGET);closePwd();goMod(_PWD_TARGET);}
+  else{
+    var err=document.getElementById('pwd-err');
+    if(err) err.textContent='Senha incorreta.';
+    if(inp){inp.value='';inp.focus();}
+  }
+}
+function closePwd(){
+  var modal=document.getElementById('pwd-modal');
+  if(modal) modal.classList.remove('show');
+  var inp=document.getElementById('pwd-input');
+  if(inp) inp.value='';
+  var err=document.getElementById('pwd-err');
+  if(err) err.textContent='';
+}
+document.addEventListener('keydown',function(e){
+  var modal=document.getElementById('pwd-modal');
+  if(modal&&modal.classList.contains('show')){
+    if(e.key==='Enter') confirmPwd();
+    if(e.key==='Escape') closePwd();
+  }
+});
+
+/* ── Progress bar ── */
+function mkPB(p){
+  var w=Math.min(100,Math.max(0,p));
+  var col=p>=100?'#22C55E':p>=70?'#F59E0B':'#EF4444';
+  return '<div class="pbw"><div class="pb"><div class="pbf" style="width:'+w+'%;background:'+col+'"></div></div><span style="font-size:11px;color:'+col+';min-width:42px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums">'+p.toFixed(1)+'%</span></div>';
+}
+
+/* ── Sparkline SVG ── */
+function mkSpark(data,color){
+  var w=72,h=28;
+  var min=Math.min.apply(null,data.filter(function(v){return v!==null&&!isNaN(v);}));
+  var max=Math.max.apply(null,data.filter(function(v){return v!==null&&!isNaN(v);}));
+  var range=max-min||1;
+  var validData=data.filter(function(v){return v!==null&&!isNaN(v);});
+  if(validData.length<2) return '';
+  var pts=data.map(function(v,i){
+    if(v===null||isNaN(v)) return null;
+    return [(i/(data.length-1)*w).toFixed(1),(h-2-((v-min)/range*(h-4))).toFixed(1)].join(',');
+  }).filter(Boolean).join(' ');
+  return '<svg viewBox="0 0 '+w+' '+h+'" class="kpi-spark"><polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
+
+/* ── KPI card ── */
+function mkK(lbl,val,tr,trc,ico,kAcc){
+  var dim=kAcc+'20',brd=kAcc+'50';
+  return '<div class="kpi" style="--k-accent:'+kAcc+';--k-accent-d:'+dim+';--k-accent-b:'+brd+'">'
+    +'<div class="kpi-top"><div class="kpi-lbl">'+lbl+'</div><div class="kpi-ico">'+ico+'</div></div>'
+    +'<div class="kpi-val">'+val+'</div>'
+    +'<div class="kpi-bottom"><div class="kpi-trend '+trc+'">'+tr+'</div></div>'
+    +'</div>';
+}
+
+/* ── Ranking ── */
+function mkRk(id,entries,isVal){
+  var max=entries[0]?entries[0][1]:1;
+  document.getElementById(id).innerHTML=entries.map(function(e,i){
+    return '<div class="rkr"><div class="rkn">'+(i+1)+'</div><div class="rknm" title="'+e[0]+'">'+(e[0].length>52?e[0].slice(0,50)+'…':e[0])+'</div><div class="rkbg"><div class="rkf" style="width:'+((e[1]/max)*100).toFixed(1)+'%"></div></div><div class="rkv">'+(isVal?BRL(e[1]):Ni(e[1]))+'</div></div>';
+  }).join('');
+}
+
+/* ── UTI badges ── */
+function mkUB(d){
+  var defs=[
+    {k:'adulto',l:'UTI Adulto',cor:'#3B82F6'},
+    {k:'ped',l:'UTI Pediátrica',cor:'#22C55E'},
+    {k:'neo',l:'UTIN Neonatal',cor:'#F59E0B'},
+    {k:'que',l:'UTI Queimados',cor:'#EF4444'},
+  ];
+  document.getElementById('ubg').innerHTML=defs.map(function(df){
+    var g=d.uti[df.k]||{dias:0,contr:0,val:0,meta:0,dif:0};
+    var pp=g.contr?(g.dias/g.contr)*100:0;var pc=pp>=100?'#22C55E':pp>=70?'#F59E0B':'#EF4444';
+    return '<div class="ub" style="--uc:'+df.cor+'"><div class="ubl">'+df.l+'</div><div class="ubv">'+Ni(g.dias)+'</div><div class="ubc">Contrato: '+Ni(g.contr)+' diárias · '+BRLk(g.val)+'</div><div class="ubp" style="color:'+pc+'">'+pp.toFixed(1)+'% atingido</div></div>';
+  }).join('');
+}
+
+/* ── UTI table (mod2) ── */
+function mkUT(tbId,d){
+  var h='';
+  var keys=[{k:'adulto'},{k:'ped'},{k:'neo'},{k:'que'}];
+  keys.forEach(function(df){
+    var g=d.uti[df.k]; if(!g) return;
+    var lbl=(g.lbl||df.k.toUpperCase()).replace(/\s*\[.*$/,'').replace(/\s*—.*$/,'').trim();
+    var pp=g.contr?(g.dias/g.contr)*100:0;
+    var col=pp>=100?'var(--grn)':pp>=70?'var(--amb)':'var(--red)';
+    var dD=g.dif, dV=g.val-(g.meta||0);
+    h+='<tr><td>'+lbl+'</td>'
+      +'<td class="mn">'+Ni(g.dias)+'</td>'
+      +'<td class="mn">'+Ni(g.contr)+'</td>'
+      +'<td class="mn">'+BRL(g.val)+'</td>'
+      +'<td class="mn">'+BRL(g.meta||0)+'</td>'
+      +'<td class="mn"><span class="badge '+(dD>=0?'pos':'neg')+'">'+(dD>=0?'+':'')+Ni(dD)+'</span></td>'
+      +'<td class="mn"><span class="badge '+(dV>=0?'pos':'neg')+'">'+(dV>=0?'+':'-')+' '+BRL(Math.abs(dV))+'</span></td>'
+      +'<td>'+mkPB(pp)+'</td>'
+      +'</tr>';
+  });
+  var tb=document.getElementById(tbId);
+  if(tb) tb.innerHTML=h;
+}
+
+/* ── ApexCharts base ── */
+var APEX={
+  chart:{background:'transparent',fontFamily:'Manrope, Inter, sans-serif',toolbar:{show:false},
+    animations:{enabled:true,easing:'easeinout',speed:700}},
+  theme:{mode:'dark'},
+  grid:{borderColor:'rgba(255,255,255,0.05)',strokeDashArray:4,padding:{left:2,right:2}},
+  xaxis:{labels:{style:{colors:'#64748B',fontSize:'10px'}},axisBorder:{show:false},axisTicks:{show:false}},
+  yaxis:{labels:{style:{colors:'#64748B',fontSize:'10px'}}},
+  legend:{labels:{colors:'#94A3B8'},fontSize:'11px',fontFamily:'Manrope'},
+  tooltip:{theme:'dark',style:{fontSize:'12px',fontFamily:'Manrope'}},
+  colors:['#3B82F6','#22C55E','#8B5CF6','#F59E0B','#EF4444','#06B6D4'],
+  dataLabels:{enabled:false},
+};
+function mkC(id,opts){
+  try{
+    if(AC[id]){AC[id].destroy();delete AC[id];}
+    var el=document.getElementById(id);
+    if(!el||!window.ApexCharts) return;
+    function deep(t,s){for(var k in s){if(s[k]&&typeof s[k]==='object'&&!Array.isArray(s[k])&&t[k]&&typeof t[k]==='object'){deep(t[k],s[k]);}else{t[k]=s[k];}}}
+    var o=JSON.parse(JSON.stringify(APEX));
+    deep(o,opts);
+    AC[id]=new ApexCharts(el,o);AC[id].render();
+  }catch(e){console.warn('[SC] Chart '+id+':',e.message);}
+}
+
+/* ── Detalhamento da Produção table ── */
+function mkComplexTable(d){
+  var rows=[
+    {lbl:'Total FAEC',          val:d.n_faec,   fv:d.tot_faec_val||0,  cor:'#F59E0B'},
+    {lbl:'Total MAC',           val:d.n_mac,    fv:d.tot_mac_val||0,   cor:'#8B5CF6'},
+    {lbl:'Media Complexidade',  val:d.n_media,  fv:d.tot_media_val||0, cor:'#3B82F6'},
+    {lbl:'Alta Complexidade',   val:d.n_alta,   fv:d.tot_alta_val||0,  cor:'#EF4444'},
+  ];
+  var h='';
+  rows.forEach(function(r){
+    h+='<tr>'
+      +'<td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+r.cor+';margin-right:8px"></span>'+r.lbl+'</td>'
+      +'<td class="mn" style="font-weight:700;color:var(--txt)">'+Ni(r.val)+'</td>'
+      +'<td class="mn">'+BRL(r.fv)+'</td>'
+      +'</tr>';
+  });
+  document.getElementById('tbCompl').innerHTML=h;
+}
+
+
+/* ── mkProdRow: linha da tabela unificada ── */
+function mkProdRow(lbl, g, cls){
+  var dc=g.dif>=0?'pos-cell':'neg-cell';
+  var gvc=g.gval>=0?'pos-cell':'neg-cell';
+  var lpad=cls==='sub-row'?'style="padding-left:20px"':'';
+  return '<tr class="'+(cls||'')+'">'
+    +'<td '+lpad+'>'+lbl+'</td>'
+    +'<td class="mn" style="font-weight:700">'+Ni(g.real||0)+'</td>'
+    +'<td class="mn">'+BRL(g.val||0)+'</td>'
+    +'<td class="mn">'+Ni(g.contr||0)+'</td>'
+    +'<td class="mn">'+BRL(g.meta||0)+'</td>'
+    +'<td class="mn '+dc+'">'+(g.dif>=0?'+':'')+Ni(g.dif||0)+'</td>'
+    +'<td class="mn '+gvc+'">'+BRL(g.gval||0)+'</td>'
+    +'</tr>';
+}
+function mkSubHdr(cols){
+  return '<tr class="col-hdr"><th style="text-align:left">'+cols[0]+'</th>'
+    +cols.slice(1).map(function(c){return '<th>'+c+'</th>';}).join('')+'</tr>';
+}
+
+function renderAll(){
+  var d=RSD; if(!d) return;
+  var rk=PROD_RK||demoProducao();
+  var now=new Date(), nowM=now.getMonth();
+
+  // Filtros afetam os rankings (R_PROD tem col. complexidade/financiamento)
+  var tQ=rk.tQ, tV=rk.tV;
+
+  // ─ Competência pill ──────────────────────────────────────────
+  if(d.competencia){
+    var hp=document.getElementById('hComp');
+    hp.textContent='Competência: '+d.competencia;hp.style.display='';
+  }
+
+  // ─ KPIs Módulo 0 — COD.HTML design ────────────────────────
+  var metaMS=CFG.MS[nowM];
+  var totalCalc=d.prod_geral||0;
+  var difM=d.diferenca||(totalCalc-(d.meta_aih||0));
+  var ppPct=(d.ating_pct||0)*100;
+
+  document.getElementById('kpi0').innerHTML=[
+    {t:"Total AIH's Realizadas", v:Ni(totalCalc),                           c:'',      ico:'📋'},
+    {t:'Meta Mensal ('+metaMS+')',v:Ni(d.meta_aih),                         c:'',      ico:'🎯'},
+    {t:'Diferença vs Meta',      v:(difM>=0?'+':'')+Ni(difM),               c:difM<0?'color:var(--red)':'color:var(--green)', ico:difM<0?'📉':'📈'},
+    {t:'Perc.% de Atingimento',  v:ppPct.toFixed(1)+'%',                    c:ppPct>=100?'color:var(--green)':'', ico:'🕘'},
+  ].map(function(k){
+    return '<div class="kpi-card">'
+      +'<div class="kpi-top">'
+      +'<div class="kpi-title">'+k.t+'</div>'
+      +'<div class="kpi-icon">'+k.ico+'</div>'
+      +'</div>'
+      +'<div class="kpi-value" style="'+k.c+'">'+k.v+'</div>'
+      +'</div>';
+  }).join('');
+
+  // ── Helper: row for data-table ───────────────────────────────
+  function mRow(lbl, g, rCls) {
+    var dc = g.dif >= 0 ? 'dgreen' : 'dred';
+    var gvc = g.gval >= 0 ? 'dgreen' : 'dred';
+    var lPad = rCls === 'tr-sub' ? 'style="padding-left:28px;color:rgba(148,163,184,.8)"' : '';
+    return '<tr class="'+(rCls||'')+'">'
+      + '<td '+lPad+'>'+lbl+'</td>'
+      + '<td class="tc">'+Ni(g.real||0)+'</td>'
+      + '<td class="tc">'+BRL(g.val||0)+'</td>'
+      + '<td class="tc">'+Ni(g.contr||0)+'</td>'
+      + '<td class="tc">'+BRL(g.meta||0)+'</td>'
+      + '<td class="tc '+dc+'">'+(g.dif>=0?'+':'')+Ni(g.dif||0)+'</td>'
+      + '<td class="tc '+gvc+'">'+BRL(g.gval||0)+'</td>'
+      + '</tr>';
+  }
+
+  // ── tbMain: Média Complexidade ────────────────────────────────
+  var h='';
+  // CIRURGICA: linha-label sem dados (conforme planilha — R4 vazia)
+  if(d.cir.labelOnly){
+    h+='<tr style="background:rgba(56,189,248,.04)">'+'<td style="font-weight:700;color:#f1f5f9;padding:13px 14px 6px">'+(d.cir.lbl||'CIRURGICA')+'</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
+  } else {
+    h+=mRow(d.cir.lbl||'CIRURGICA', d.cir, '');
+  }
+  // Eletivo e Urgência: linhas normais (não mais sub-rows)
+  h+=mRow(d.elet.lbl||'Eletivo',    d.elet, '');
+  h+=mRow(d.urg.lbl||'Urgencia',    d.urg,  '');
+  h+=mRow(d.cli.lbl||'CLÍNICO/PEDIATRIA', d.cli, '');
+  h+=mRow(d.obs.lbl||'OBSTETRÍCIA', d.obs,  '');
+  if(d.mTot) h+=mRow((d.mTot.lbl||"TOTAL AIH'S DE MÉDIA COMPLEXIDADE - MAC").toUpperCase(), d.mTot, 'tr-total');
+  document.getElementById('tbMain').innerHTML=h;
+
+  // ── tbAlta: Alta Complexidade ─────────────────────────────────
+  var hA='';
+  if(d.alta) hA+=mRow("TOTAL AIH'S DE ALTA COMPLEXIDADE - MAC", d.alta, 'tr-total');
+  document.getElementById('tbAlta').innerHTML=hA;
+
+  // ── tbUTI: Diárias de UTI ─────────────────────────────────────
+  var hU='';
+  ['adulto','ped','neo','que'].forEach(function(k){
+    var g=d.uti[k]; if(!g) return;
+    var lbl=(g.lbl||k.toUpperCase()).replace(/\s*\[.*$/,'').replace(/\s*—.*$/,'').trim();
+    hU+=mRow(lbl,{real:g.dias,val:g.val,contr:g.contr,meta:g.meta,dif:g.dif,gval:g.gval},'');
+  });
+  var ut=d.uti.total;
+  if(ut) hU+=mRow('TOTAL GERAL DE DIÁRIAS DE UTI',{real:ut.dias,val:ut.val,contr:ut.contr,meta:ut.meta,dif:ut.dif,gval:ut.gval},'tr-total');
+  document.getElementById('tbUTI').innerHTML=hU;
+
+  // ── detDiv: Detalhamento da Produção ──────────────────────────
+  var detHdr='<div style="display:flex;justify-content:space-between;align-items:center;'
+    +'padding:0 0 8px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:4px">'
+    +'<span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(148,163,184,.7)">Descrição</span>'
+    +'<span style="display:flex;gap:12px;flex-shrink:0">'
+    +'<span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(148,163,184,.7);min-width:36px;text-align:right">Prod. Total</span>'
+    +'<span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(148,163,184,.7);min-width:110px;text-align:right">Total da Conta</span>'
+    +'</span></div>';
+  var detRows=[
+    {l:'Total FAEC',         q:d.n_faec,  v:d.tot_faec_val||0},
+    {l:'Total MAC',          q:d.n_mac,   v:d.tot_mac_val||0},
+    {l:'Média Complexidade', q:d.n_media, v:d.tot_media_val||0},
+    {l:'Alta Complexidade',  q:d.n_alta,  v:d.tot_alta_val||0},
+  ].map(function(r){
+    return '<div class="side-row">'
+      +'<span>'+r.l+'</span>'
+      +'<span style="display:flex;align-items:center;gap:12px;flex-shrink:0">'
+      +'<span style="font-size:13px;font-weight:700;color:#f1f5f9;min-width:36px;text-align:right">'+Ni(r.q)+'</span>'
+      +'<strong style="min-width:110px;text-align:right">'+BRL(r.v)+'</strong>'
+      +'</span></div>';
+  }).join('');
+  document.getElementById('detDiv').innerHTML=detHdr+detRows;
+
+  // ── cumpDiv: Cumprimento de Incentivo ─────────────────────────
+  var totPct2=Math.min(100,d.meta_aih?(totalCalc/d.meta_aih*100):0);
+  document.getElementById('cumpDiv').innerHTML=[
+    {l:"Total AIH's Realizadas",v:Ni(totalCalc),    vc:'',                pct:totPct2,        bc:'#22d3ee'},
+    {l:'Meta Mensal',           v:Ni(d.meta_aih),   vc:'',                pct:100,            bc:'#facc15'},
+    {l:'Diferença vs Meta',     v:(difM>=0?'+':'')+Ni(difM),vc:difM<0?'color:#f87171':'color:#4ade80',
+                                pct:Math.min(100,d.meta_aih?Math.abs(difM)/d.meta_aih*100:0), bc:'#f87171'},
+    {l:'Perc.%',                v:ppPct.toFixed(1)+'%',vc:ppPct>=100?'color:#4ade80':'color:#22d3ee',
+                                pct:Math.min(100,ppPct), bc:'#22d3ee'},
+  ].map(function(r){
+    return '<div class="prog-group">'
+      +'<div class="prog-top"><span>'+r.l+'</span><strong style="'+r.vc+'">'+r.v+'</strong></div>'
+      +'<div class="prog-track"><div class="prog-fill" style="width:'+r.pct.toFixed(0)+'%;background:'+r.bc+'"></div></div>'
+      +'</div>';
+  }).join('');
+
+  // ─ KPIs Módulo 1 ─────────────────────────────────────────────
+  // ─ KPIs Módulo 1 ─────────────────────────────────────────────
+  document.getElementById('kpi1').innerHTML=
+    mkK('Total AIHs',Ni(totalCalc),'','neu','📋','#3B82F6')+
+    mkK('Ticket Médio / AIH',BRL(d.ticket),'Valor médio por internação — '+BRLk(d.tot_val)+' total','neu','🏷','#06B6D4');
+
+  // ─ Rankings ───────────────────────────────────────────────────
+  mkRk('rkQ',tQ,false); mkRk('rkV',tV,true);
+
+  /* ════ GRÁFICOS ApexCharts ═════════════════════════════════ */
+
+  // ch0: Meta × Realizado por especialidade
+  mkC('ch0',{chart:{type:'bar',height:200},
+    series:[{name:'Contrato',data:[d.cir.contr,d.cli.contr,d.obs.contr]},{name:'Realizado',data:[d.cir.real,d.cli.real,d.obs.real]}],
+    xaxis:{categories:['Cirúrgica','Clínico/Ped.','Obstetrícia']},
+    plotOptions:{bar:{borderRadius:5,columnWidth:'60%'}},
+    colors:['rgba(255,255,255,0.15)','#3B82F6']});
+
+  // ch1: Evolução acumulada (metas + produção real do mês)
+  var sm=0,mAcc=CFG.MM.map(function(v){return sm+=v;});
+  var prodReal=CFG.MM.map(function(_,i){return i===nowM?d.prod_geral:(i<nowM?null:null);});
+  mkC('ch1',{chart:{type:'area',height:200},
+    series:[{name:'Meta Acumul.',data:mAcc},{name:'Produção',data:prodReal}],
+    xaxis:{categories:CFG.MS},stroke:{curve:'smooth',width:[1.5,2.5]},
+    fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:0.4,opacityTo:0.05}},
+    colors:['#64748B','#3B82F6'],markers:{size:[2,6]}});
+
+  // ch2: Comparativo mensal (metas)
+  var realMes=CFG.MM.map(function(_,i){return i===nowM?d.prod_geral:null;});
+  mkC('ch2',{chart:{type:'bar',height:190},
+    series:[{name:'Meta',data:CFG.MM},{name:'Realizado',data:realMes}],
+    xaxis:{categories:CFG.MS},plotOptions:{bar:{borderRadius:4,columnWidth:'55%'}},
+    colors:['rgba(255,255,255,0.1)','#3B82F6']});
+
+  // ch3: Média × Alta Complexidade donut
+  mkC('ch3',{chart:{type:'donut',height:190},
+    series:[d.n_media,d.n_alta],
+    labels:['Média Complexidade','Alta Complexidade'],
+    plotOptions:{pie:{donut:{size:'65%',labels:{show:true,total:{show:true,label:'AIH\'s',color:'#94A3B8',fontSize:'11px'}}}}}});
+
+  // ch4: Faturamento por especialidade donut
+  mkC('ch4',{chart:{type:'donut',height:240},
+    series:[d.cir.val,d.cli.val,d.obs.val],
+    labels:['Cirúrgica','Clínico/Ped.','Obstetrícia'],
+    plotOptions:{pie:{donut:{size:'68%',labels:{show:true,total:{show:true,label:'Faturamento',color:'#94A3B8',fontSize:'10px',formatter:function(w){return BRLk(w.globals.seriesTotals.reduce(function(a,b){return a+b;},0));}}}}}}});
+
+  // ch5: Custo médio por especialidade (horizontal bar)
+  mkC('ch5',{chart:{type:'bar',height:240},
+    series:[{name:'Custo Médio / AIH (R$)',data:[
+      d.cir.real?+(d.cir.val/d.cir.real).toFixed(2):0,
+      d.cli.real?+(d.cli.val/d.cli.real).toFixed(2):0,
+      d.obs.real?+(d.obs.val/d.obs.real).toFixed(2):0]}],
+    xaxis:{categories:['Cirúrgica','Clínico/Ped.','Obstetrícia']},
+    plotOptions:{bar:{horizontal:true,borderRadius:5,barHeight:'50%'}},
+    colors:['#8B5CF6'],yaxis:{labels:{style:{colors:'#64748B',fontSize:'11px'}}}});
+
+  // ch6: Eletivo × Urgência — realizado vs contratado (grouped columns)
+  mkC('ch6',{chart:{type:'bar',height:190},
+    series:[{name:'Eletivo',data:[d.elet.real,d.elet.contr]},{name:'Urgência',data:[d.urg.real,d.urg.contr]}],
+    xaxis:{categories:['Realizado','Contratado']},
+    plotOptions:{bar:{borderRadius:5,columnWidth:'55%'}},
+    colors:['#06B6D4','#EF4444']});
+
+  // ch7: UTI pie
+  mkC('ch7',{chart:{type:'pie',height:240},
+    series:[d.uti.adulto.dias,d.uti.ped.dias,d.uti.neo.dias,(d.uti.que?d.uti.que.dias:0)],
+    labels:['UTI Adulto','UTI Pediátrica','UTIN Neonatal','UTI Queimados'],
+    colors:['#3B82F6','#22C55E','#F59E0B']});
+
+  // ch8: UTI bar contrato vs realizado
+  mkC('ch8',{chart:{type:'bar',height:240},
+    series:[{name:'Contrato',data:[d.uti.adulto.contr,d.uti.ped.contr,d.uti.neo.contr,(d.uti.que?d.uti.que.contr:30)]},{name:'Realizado',data:[d.uti.adulto.dias,d.uti.ped.dias,d.uti.neo.dias,(d.uti.que?d.uti.que.dias:0)]}],
+    xaxis:{categories:['UTI Adulto','UTI Pediátrica','UTIN Neonatal','UTI Queimados']},
+    plotOptions:{bar:{borderRadius:5,columnWidth:'55%'}},
+    colors:['rgba(255,255,255,0.15)','#3B82F6']});
+
+  // ch9: Projeção diárias UTI metas anuais
+  var uMetaTotal=d.uti.adulto.contr+d.uti.ped.contr+d.uti.neo.contr;
+  var uSum=CFG.MM.reduce(function(a,b){return a+b;},0);
+  var uML=CFG.MM.map(function(m){return Math.round(uMetaTotal*(m/uSum*12));});
+  var uReal=CFG.MS.map(function(_,i){return i===nowM?(d.uti.adulto.dias+d.uti.ped.dias+d.uti.neo.dias):null;});
+  mkC('ch9',{chart:{type:'line',height:200},
+    series:[{name:'Meta',data:uML},{name:'Realizado',data:uReal}],
+    xaxis:{categories:CFG.MS},stroke:{curve:'smooth',width:[1.5,2.5]},
+    colors:['#64748B','#3B82F6'],markers:{size:[2,8]}});
+
+  // ch10: Custo médio por diária por UTI
+  var custosUTI=[
+    d.uti.adulto.dias?+(d.uti.adulto.val/d.uti.adulto.dias).toFixed(2):0,
+    d.uti.ped.dias?+(d.uti.ped.val/d.uti.ped.dias).toFixed(2):0,
+    d.uti.neo.dias?+(d.uti.neo.val/d.uti.neo.dias).toFixed(2):0,
+    (d.uti.que&&d.uti.que.dias)?+(d.uti.que.val/d.uti.que.dias).toFixed(2):0,
+  ];
+  mkC('ch10',{chart:{type:'bar',height:200},
+    series:[{name:'Custo Médio / Diária (R$)',data:custosUTI}],
+    xaxis:{categories:['UTI Adulto','UTI Pediátrica','UTIN Neonatal','UTI Queimados']},
+    plotOptions:{bar:{horizontal:true,borderRadius:5,barHeight:'45%'}},
+    colors:['#8B5CF6'],yaxis:{labels:{style:{colors:'#64748B',fontSize:'10px'}}}});
+}
+
+/* ── Export CSV dos dados do dashboard ── */
+function doExport(){
+  var d=RSD; if(!d){alert('Dados não carregados.');return;}
+  var rows=[
+    ['DASHBOARD CONTROLADORIA — SANTA CASA MONTES CLAROS'],
+    ['Competência: '+(d.competencia||'')],[''],
+    ['=== CUMPRIMENTO DE INCENTIVO ==='],
+    ['Total AIHs Realizadas',d.prod_geral],
+    ['Meta Mensal',d.meta_aih],
+    ['Diferença vs Meta',d.diferenca],
+    ['Perc.%',((d.ating_pct||0)*100).toFixed(1)+'%'],[''],
+    ['=== PRODUÇÃO — MÉDIA COMPLEXIDADE ==='],
+    ['Grupo','Produção Total','Total da Conta','Contrato','Valor','Dif','Valor(Dif)'],
+    [d.cir.lbl||'CIRURGICA',d.cir.real,d.cir.val,d.cir.contr,d.cir.meta,d.cir.dif,d.cir.gval],
+    [d.elet.lbl||'Eletivo',d.elet.real,d.elet.val,d.elet.contr,d.elet.meta,d.elet.dif,d.elet.gval],
+    [d.urg.lbl||'Urgencia',d.urg.real,d.urg.val,d.urg.contr,d.urg.meta,d.urg.dif,d.urg.gval],
+    [d.cli.lbl||'CLÍNICO/PEDIATRIA',d.cli.real,d.cli.val,d.cli.contr,d.cli.meta,d.cli.dif,d.cli.gval],
+    [d.obs.lbl||'OBSTETRÍCIA',d.obs.real,d.obs.val,d.obs.contr,d.obs.meta,d.obs.dif,d.obs.gval],
+    [d.mTot?d.mTot.lbl:'Total Média',d.mTot?d.mTot.real:0,d.mTot?d.mTot.val:0,d.mTot?d.mTot.contr:0,'','',''],
+    [''],['=== ALTA COMPLEXIDADE ==='],
+    [d.alta?d.alta.lbl:'Total Alta',d.alta?d.alta.real:0,d.alta?d.alta.val:0,d.alta?d.alta.contr:0,'','',''],
+    [''],['=== DIÁRIAS DE UTI ==='],
+    ['Tipo','Diárias','Total R$','Contrato','Valor','Dif','Valor(Dif)'],
+    ['UTI Adulto',d.uti.adulto.dias,d.uti.adulto.val,d.uti.adulto.contr,d.uti.adulto.meta,d.uti.adulto.dif,d.uti.adulto.gval],
+    ['UTI Pediátrica',d.uti.ped.dias,d.uti.ped.val,d.uti.ped.contr,d.uti.ped.meta,d.uti.ped.dif,d.uti.ped.gval],
+    ['UTIN Neonatal',d.uti.neo.dias,d.uti.neo.val,d.uti.neo.contr,d.uti.neo.meta,d.uti.neo.dif,d.uti.neo.gval],
+  ];
+  var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c||'').replace(/"/g,'""')+'"';}).join(';');}).join('\n');
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,﻿'+encodeURIComponent(csv);
+  a.download='dashboard_controladoria_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INIT — carrega dados e renderiza
+═══════════════════════════════════════════════════════════════ */
+async function init(){
+  initTime();
+  try{
+    // Usa PapaParse com download:true — mesma abordagem da versão que funcionou no Google Sites
+    setLd('Conectando ao Google Sheets...',40);
+    var grid=await loadCSVPapa(CFG.URL_RESUMO);
+    setLd('Processando dados...',70);
+    RSD=parseResumo(grid);
+    if(!RSD){
+      // Dados carregados mas aba errada — tenta direto
+      throw new Error('aba incorreta — publique a aba RESUMO como CSV com gid correto');
+    }
+
+    if(CFG.URL_PRODUCAO){
+      try{
+        var grid2=await loadCSVPapa(CFG.URL_PRODUCAO);
+        PROD_RK=parseProducao(grid2);
+      }catch(e2){PROD_RK=demoProducao();}
+    }else{
+      PROD_RK=demoProducao();
+    }
+  }catch(e){
+    console.warn('[SC] Fallback demo:',e.message);
+    // Exibe aviso visual com orientação
+    try{
+      var ld=document.getElementById('ld-txt');
+      if(ld) ld.innerHTML='<span style="color:#F59E0B">⚠ Usando dados de demonstração<br>'
+        +'<small style="font-size:10px;color:#64748b">Verifique: Planilha publicada como CSV? Aba RESUMO selecionada?</small></span>';
+    }catch(x){}
+    RSD=demoResumo();
+    PROD_RK=demoProducao();
+  }finally{
+    setLd('Renderizando...',92);
+    try{renderAll();}catch(e){console.error('[SC] render:',e);}
+    try{document.getElementById('ldbar').style.width='100%';}catch(x){}
+    setTimeout(function(){
+      try{
+        var ld=document.getElementById('ld');
+        ld.style.transition='opacity .4s';ld.style.opacity='0';
+        setTimeout(function(){ld.style.display='none';},400);
+      }catch(x){}
+    },300);
+  }
+}
+/* ═══ LOGIN ═══════════════════════════════════════════════════ */
+var _LK='sc_painel_auth';
+function doLogin(){
+  var u=document.getElementById('lg-user').value.trim();
+  var p=document.getElementById('lg-pass').value;
+  var err=document.getElementById('lg-err');
+  if(u==='Faturamento'&&p==='Santacasa@3643'){
+    try{sessionStorage.setItem(_LK,'1');}catch(x){}
+    document.getElementById('login-screen').style.display='none';
+    err.classList.remove('show');
+  }else{
+    err.classList.add('show');
+    document.getElementById('lg-pass').value='';
+    document.getElementById('lg-pass').focus();
+  }
+}
+(function(){
+  try{if(sessionStorage.getItem(_LK)==='1'){document.getElementById('login-screen').style.display='none';}}catch(x){}
+  ['lg-user','lg-pass'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+  });
+})();
+
+init();
+</script>
+
+
+<!-- ═══ AUTO-REFRESH GITHUB PAGES v20260716141759 ════════════════ -->
+<script>
+(function(){
+  var CURRENT_VER='20260728113453';
+  var PAGE_URL=location.href.split('?')[0].split('#')[0];
+  // Garante URL sem cache
+  if(PAGE_URL.slice(-1)==='/') PAGE_URL+='index.html';
+
+  function checkVersion(){
+    fetch(PAGE_URL+'?_='+Date.now(),{cache:'no-store'})
+      .then(function(r){return r.text();})
+      .then(function(txt){
+        var m=txt.match(/name="sc-version"\s+content="([^"]+)"/);
+        if(m&&m[1]&&m[1]!==CURRENT_VER){
+          console.log('[SC] Nova versão detectada: '+m[1]+' — recarregando...');
+          location.reload(true);
+        }
+      }).catch(function(){});
+  }
+
+  // Verificar a cada 3 minutos
+  setInterval(checkVersion, 3*60*1000);
+  setTimeout(checkVersion, 15000);
+  console.log('[SC] Auto-refresh ativo. Versão atual: '+CURRENT_VER);
+})();
+</script>
+</body>
+</html>
+
+
