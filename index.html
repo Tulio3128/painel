@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head>
+<html lang="pt-BR">
+<head>
 <meta charset="UTF-8">
-<meta name="sc-version" content="20260810152206">
+<meta name="sc-version" content="20260728113453">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Painel SUS · Santa Casa Montes Claros</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.44.0/apexcharts.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -434,610 +435,14 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
 .pdf-step{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--txt3);font-weight:700;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
 .pdf-step::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--blue)}
 </style>
-<style id="apexcharts-css">@keyframes opaque {
-  0% {
-      opacity: 0
-  }
-
-  to {
-      opacity: 1
-  }
-}
-
-@keyframes resizeanim {
-  0%,to {
-      opacity: 0
-  }
-}
-
-.apexcharts-canvas {
-  position: relative;
-  user-select: none
-}
-
-.apexcharts-canvas ::-webkit-scrollbar {
-  -webkit-appearance: none;
-  width: 6px
-}
-
-.apexcharts-canvas ::-webkit-scrollbar-thumb {
-  border-radius: 4px;
-  background-color: rgba(0,0,0,.5);
-  box-shadow: 0 0 1px rgba(255,255,255,.5);
-  -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5)
-}
-
-.apexcharts-inner {
-  position: relative
-}
-
-.apexcharts-text tspan {
-  font-family: inherit
-}
-
-.legend-mouseover-inactive {
-  transition: .15s ease all;
-  opacity: .2
-}
-
-.apexcharts-legend-text {
-  padding-left: 15px;
-  margin-left: -15px;
-}
-
-.apexcharts-series-collapsed {
-  opacity: 0
-}
-
-.apexcharts-tooltip {
-  border-radius: 5px;
-  box-shadow: 2px 2px 6px -4px #999;
-  cursor: default;
-  font-size: 14px;
-  left: 62px;
-  opacity: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 20px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  white-space: nowrap;
-  z-index: 12;
-  transition: .15s ease all
-}
-
-.apexcharts-tooltip.apexcharts-active {
-  opacity: 1;
-  transition: .15s ease all
-}
-
-.apexcharts-tooltip.apexcharts-theme-light {
-  border: 1px solid #e3e3e3;
-  background: rgba(255,255,255,.96)
-}
-
-.apexcharts-tooltip.apexcharts-theme-dark {
-  color: #fff;
-  background: rgba(30,30,30,.8)
-}
-
-.apexcharts-tooltip * {
-  font-family: inherit
-}
-
-.apexcharts-tooltip-title {
-  padding: 6px;
-  font-size: 15px;
-  margin-bottom: 4px
-}
-
-.apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title {
-  background: #eceff1;
-  border-bottom: 1px solid #ddd
-}
-
-.apexcharts-tooltip.apexcharts-theme-dark .apexcharts-tooltip-title {
-  background: rgba(0,0,0,.7);
-  border-bottom: 1px solid #333
-}
-
-.apexcharts-tooltip-text-goals-value,.apexcharts-tooltip-text-y-value,.apexcharts-tooltip-text-z-value {
-  display: inline-block;
-  margin-left: 5px;
-  font-weight: 600
-}
-
-.apexcharts-tooltip-text-goals-label:empty,.apexcharts-tooltip-text-goals-value:empty,.apexcharts-tooltip-text-y-label:empty,.apexcharts-tooltip-text-y-value:empty,.apexcharts-tooltip-text-z-value:empty,.apexcharts-tooltip-title:empty {
-  display: none
-}
-
-.apexcharts-tooltip-text-goals-label,.apexcharts-tooltip-text-goals-value {
-  padding: 6px 0 5px
-}
-
-.apexcharts-tooltip-goals-group,.apexcharts-tooltip-text-goals-label,.apexcharts-tooltip-text-goals-value {
-  display: flex
-}
-
-.apexcharts-tooltip-text-goals-label:not(:empty),.apexcharts-tooltip-text-goals-value:not(:empty) {
-  margin-top: -6px
-}
-
-.apexcharts-tooltip-marker {
-  width: 12px;
-  height: 12px;
-  position: relative;
-  top: 0;
-  margin-right: 10px;
-  border-radius: 50%
-}
-
-.apexcharts-tooltip-series-group {
-  padding: 0 10px;
-  display: none;
-  text-align: left;
-  justify-content: left;
-  align-items: center
-}
-
-.apexcharts-tooltip-series-group.apexcharts-active .apexcharts-tooltip-marker {
-  opacity: 1
-}
-
-.apexcharts-tooltip-series-group.apexcharts-active,.apexcharts-tooltip-series-group:last-child {
-  padding-bottom: 4px
-}
-
-.apexcharts-tooltip-series-group-hidden {
-  opacity: 0;
-  height: 0;
-  line-height: 0;
-  padding: 0!important
-}
-
-.apexcharts-tooltip-y-group {
-  padding: 6px 0 5px
-}
-
-.apexcharts-custom-tooltip,.apexcharts-tooltip-box {
-  padding: 4px 8px
-}
-
-.apexcharts-tooltip-boxPlot {
-  display: flex;
-  flex-direction: column-reverse
-}
-
-.apexcharts-tooltip-box>div {
-  margin: 4px 0
-}
-
-.apexcharts-tooltip-box span.value {
-  font-weight: 700
-}
-
-.apexcharts-tooltip-rangebar {
-  padding: 5px 8px
-}
-
-.apexcharts-tooltip-rangebar .category {
-  font-weight: 600;
-  color: #777
-}
-
-.apexcharts-tooltip-rangebar .series-name {
-  font-weight: 700;
-  display: block;
-  margin-bottom: 5px
-}
-
-.apexcharts-xaxistooltip,.apexcharts-yaxistooltip {
-  opacity: 0;
-  pointer-events: none;
-  color: #373d3f;
-  font-size: 13px;
-  text-align: center;
-  border-radius: 2px;
-  position: absolute;
-  z-index: 10;
-  background: #eceff1;
-  border: 1px solid #90a4ae
-}
-
-.apexcharts-xaxistooltip {
-  padding: 9px 10px;
-  transition: .15s ease all
-}
-
-.apexcharts-xaxistooltip.apexcharts-theme-dark {
-  background: rgba(0,0,0,.7);
-  border: 1px solid rgba(0,0,0,.5);
-  color: #fff
-}
-
-.apexcharts-xaxistooltip:after,.apexcharts-xaxistooltip:before {
-  left: 50%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none
-}
-
-.apexcharts-xaxistooltip:after {
-  border-color: transparent;
-  border-width: 6px;
-  margin-left: -6px
-}
-
-.apexcharts-xaxistooltip:before {
-  border-color: transparent;
-  border-width: 7px;
-  margin-left: -7px
-}
-
-.apexcharts-xaxistooltip-bottom:after,.apexcharts-xaxistooltip-bottom:before {
-  bottom: 100%
-}
-
-.apexcharts-xaxistooltip-top:after,.apexcharts-xaxistooltip-top:before {
-  top: 100%
-}
-
-.apexcharts-xaxistooltip-bottom:after {
-  border-bottom-color: #eceff1
-}
-
-.apexcharts-xaxistooltip-bottom:before {
-  border-bottom-color: #90a4ae
-}
-
-.apexcharts-xaxistooltip-bottom.apexcharts-theme-dark:after,.apexcharts-xaxistooltip-bottom.apexcharts-theme-dark:before {
-  border-bottom-color: rgba(0,0,0,.5)
-}
-
-.apexcharts-xaxistooltip-top:after {
-  border-top-color: #eceff1
-}
-
-.apexcharts-xaxistooltip-top:before {
-  border-top-color: #90a4ae
-}
-
-.apexcharts-xaxistooltip-top.apexcharts-theme-dark:after,.apexcharts-xaxistooltip-top.apexcharts-theme-dark:before {
-  border-top-color: rgba(0,0,0,.5)
-}
-
-.apexcharts-xaxistooltip.apexcharts-active {
-  opacity: 1;
-  transition: .15s ease all
-}
-
-.apexcharts-yaxistooltip {
-  padding: 4px 10px
-}
-
-.apexcharts-yaxistooltip.apexcharts-theme-dark {
-  background: rgba(0,0,0,.7);
-  border: 1px solid rgba(0,0,0,.5);
-  color: #fff
-}
-
-.apexcharts-yaxistooltip:after,.apexcharts-yaxistooltip:before {
-  top: 50%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none
-}
-
-.apexcharts-yaxistooltip:after {
-  border-color: transparent;
-  border-width: 6px;
-  margin-top: -6px
-}
-
-.apexcharts-yaxistooltip:before {
-  border-color: transparent;
-  border-width: 7px;
-  margin-top: -7px
-}
-
-.apexcharts-yaxistooltip-left:after,.apexcharts-yaxistooltip-left:before {
-  left: 100%
-}
-
-.apexcharts-yaxistooltip-right:after,.apexcharts-yaxistooltip-right:before {
-  right: 100%
-}
-
-.apexcharts-yaxistooltip-left:after {
-  border-left-color: #eceff1
-}
-
-.apexcharts-yaxistooltip-left:before {
-  border-left-color: #90a4ae
-}
-
-.apexcharts-yaxistooltip-left.apexcharts-theme-dark:after,.apexcharts-yaxistooltip-left.apexcharts-theme-dark:before {
-  border-left-color: rgba(0,0,0,.5)
-}
-
-.apexcharts-yaxistooltip-right:after {
-  border-right-color: #eceff1
-}
-
-.apexcharts-yaxistooltip-right:before {
-  border-right-color: #90a4ae
-}
-
-.apexcharts-yaxistooltip-right.apexcharts-theme-dark:after,.apexcharts-yaxistooltip-right.apexcharts-theme-dark:before {
-  border-right-color: rgba(0,0,0,.5)
-}
-
-.apexcharts-yaxistooltip.apexcharts-active {
-  opacity: 1
-}
-
-.apexcharts-yaxistooltip-hidden {
-  display: none
-}
-
-.apexcharts-xcrosshairs,.apexcharts-ycrosshairs {
-  pointer-events: none;
-  opacity: 0;
-  transition: .15s ease all
-}
-
-.apexcharts-xcrosshairs.apexcharts-active,.apexcharts-ycrosshairs.apexcharts-active {
-  opacity: 1;
-  transition: .15s ease all
-}
-
-.apexcharts-ycrosshairs-hidden {
-  opacity: 0
-}
-
-.apexcharts-selection-rect {
-  cursor: move
-}
-
-.svg_select_boundingRect,.svg_select_points_rot {
-  pointer-events: none;
-  opacity: 0;
-  visibility: hidden
-}
-
-.apexcharts-selection-rect+g .svg_select_boundingRect,.apexcharts-selection-rect+g .svg_select_points_rot {
-  opacity: 0;
-  visibility: hidden
-}
-
-.apexcharts-selection-rect+g .svg_select_points_l,.apexcharts-selection-rect+g .svg_select_points_r {
-  cursor: ew-resize;
-  opacity: 1;
-  visibility: visible
-}
-
-.svg_select_points {
-  fill: #efefef;
-  stroke: #333;
-  rx: 2
-}
-
-.apexcharts-svg.apexcharts-zoomable.hovering-zoom {
-  cursor: crosshair
-}
-
-.apexcharts-svg.apexcharts-zoomable.hovering-pan {
-  cursor: move
-}
-
-.apexcharts-menu-icon,.apexcharts-pan-icon,.apexcharts-reset-icon,.apexcharts-selection-icon,.apexcharts-toolbar-custom-icon,.apexcharts-zoom-icon,.apexcharts-zoomin-icon,.apexcharts-zoomout-icon {
-  cursor: pointer;
-  width: 20px;
-  height: 20px;
-  line-height: 24px;
-  color: #6e8192;
-  text-align: center
-}
-
-.apexcharts-menu-icon svg,.apexcharts-reset-icon svg,.apexcharts-zoom-icon svg,.apexcharts-zoomin-icon svg,.apexcharts-zoomout-icon svg {
-  fill: #6e8192
-}
-
-.apexcharts-selection-icon svg {
-  fill: #444;
-  transform: scale(.76)
-}
-
-.apexcharts-theme-dark .apexcharts-menu-icon svg,.apexcharts-theme-dark .apexcharts-pan-icon svg,.apexcharts-theme-dark .apexcharts-reset-icon svg,.apexcharts-theme-dark .apexcharts-selection-icon svg,.apexcharts-theme-dark .apexcharts-toolbar-custom-icon svg,.apexcharts-theme-dark .apexcharts-zoom-icon svg,.apexcharts-theme-dark .apexcharts-zoomin-icon svg,.apexcharts-theme-dark .apexcharts-zoomout-icon svg {
-  fill: #f3f4f5
-}
-
-.apexcharts-canvas .apexcharts-reset-zoom-icon.apexcharts-selected svg,.apexcharts-canvas .apexcharts-selection-icon.apexcharts-selected svg,.apexcharts-canvas .apexcharts-zoom-icon.apexcharts-selected svg {
-  fill: #008ffb
-}
-
-.apexcharts-theme-light .apexcharts-menu-icon:hover svg,.apexcharts-theme-light .apexcharts-reset-icon:hover svg,.apexcharts-theme-light .apexcharts-selection-icon:not(.apexcharts-selected):hover svg,.apexcharts-theme-light .apexcharts-zoom-icon:not(.apexcharts-selected):hover svg,.apexcharts-theme-light .apexcharts-zoomin-icon:hover svg,.apexcharts-theme-light .apexcharts-zoomout-icon:hover svg {
-  fill: #333
-}
-
-.apexcharts-menu-icon,.apexcharts-selection-icon {
-  position: relative
-}
-
-.apexcharts-reset-icon {
-  margin-left: 5px
-}
-
-.apexcharts-menu-icon,.apexcharts-reset-icon,.apexcharts-zoom-icon {
-  transform: scale(.85)
-}
-
-.apexcharts-zoomin-icon,.apexcharts-zoomout-icon {
-  transform: scale(.7)
-}
-
-.apexcharts-zoomout-icon {
-  margin-right: 3px
-}
-
-.apexcharts-pan-icon {
-  transform: scale(.62);
-  position: relative;
-  left: 1px;
-  top: 0
-}
-
-.apexcharts-pan-icon svg {
-  fill: #fff;
-  stroke: #6e8192;
-  stroke-width: 2
-}
-
-.apexcharts-pan-icon.apexcharts-selected svg {
-  stroke: #008ffb
-}
-
-.apexcharts-pan-icon:not(.apexcharts-selected):hover svg {
-  stroke: #333
-}
-
-.apexcharts-toolbar {
-  position: absolute;
-  z-index: 11;
-  max-width: 176px;
-  text-align: right;
-  border-radius: 3px;
-  padding: 0 6px 2px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center
-}
-
-.apexcharts-menu {
-  background: #fff;
-  position: absolute;
-  top: 100%;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  padding: 3px;
-  right: 10px;
-  opacity: 0;
-  min-width: 110px;
-  transition: .15s ease all;
-  pointer-events: none
-}
-
-.apexcharts-menu.apexcharts-menu-open {
-  opacity: 1;
-  pointer-events: all;
-  transition: .15s ease all
-}
-
-.apexcharts-menu-item {
-  padding: 6px 7px;
-  font-size: 12px;
-  cursor: pointer
-}
-
-.apexcharts-theme-light .apexcharts-menu-item:hover {
-  background: #eee
-}
-
-.apexcharts-theme-dark .apexcharts-menu {
-  background: rgba(0,0,0,.7);
-  color: #fff
-}
-
-@media screen and (min-width:768px) {
-  .apexcharts-canvas:hover .apexcharts-toolbar {
-      opacity: 1
-  }
-}
-
-.apexcharts-canvas .apexcharts-element-hidden,.apexcharts-datalabel.apexcharts-element-hidden,.apexcharts-hide .apexcharts-series-points {
-  opacity: 0
-}
-
-.apexcharts-hidden-element-shown {
-  opacity: 1;
-  transition: 0.25s ease all;
-}
-.apexcharts-datalabel,.apexcharts-datalabel-label,.apexcharts-datalabel-value,.apexcharts-datalabels,.apexcharts-pie-label {
-  cursor: default;
-  pointer-events: none
-}
-
-.apexcharts-pie-label-delay {
-  opacity: 0;
-  animation-name: opaque;
-  animation-duration: .3s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease
-}
-
-.apexcharts-annotation-rect,.apexcharts-area-series .apexcharts-area,.apexcharts-area-series .apexcharts-series-markers .apexcharts-marker.no-pointer-events,.apexcharts-gridline,.apexcharts-line,.apexcharts-line-series .apexcharts-series-markers .apexcharts-marker.no-pointer-events,.apexcharts-point-annotation-label,.apexcharts-radar-series path,.apexcharts-radar-series polygon,.apexcharts-toolbar svg,.apexcharts-tooltip .apexcharts-marker,.apexcharts-xaxis-annotation-label,.apexcharts-yaxis-annotation-label,.apexcharts-zoom-rect {
-  pointer-events: none
-}
-
-.apexcharts-marker {
-  transition: .15s ease all
-}
-
-.resize-triggers {
-  animation: 1ms resizeanim;
-  visibility: hidden;
-  opacity: 0;
-  height: 100%;
-  width: 100%;
-  overflow: hidden
-}
-
-.contract-trigger:before,.resize-triggers,.resize-triggers>div {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0
-}
-
-.resize-triggers>div {
-  height: 100%;
-  width: 100%;
-  background: #eee;
-  overflow: auto
-}
-
-.contract-trigger:before {
-  overflow: hidden;
-  width: 200%;
-  height: 200%
-}
-
-.apexcharts-bar-goals-markers{
-  pointer-events: none
-}
-
-.apexcharts-bar-shadows{
-  pointer-events: none
-}
-
-.apexcharts-rangebar-goals-markers{
-  pointer-events: none
-}</style></head>
+</head>
 <body>
 
 <!-- LOADING -->
-<div id="pwd-modal" class="">
+<div id="pwd-modal">
   <div class="pwd-box">
     <div class="pwd-ico">🔒</div>
-    <div class="pwd-title" id="pwd-modname">Atualizar via PDF</div>
+    <div class="pwd-title" id="pwd-modname">Acesso Restrito</div>
     <div class="pwd-sub">Digite a senha para acessar este módulo</div>
     <input class="pwd-input" type="password" id="pwd-input" maxlength="10" placeholder="••••">
     <div class="pwd-err" id="pwd-err"></div>
@@ -1068,7 +473,7 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
 <div id="ld">
   <div class="ld-logo" style="background:none;padding:0;overflow:hidden"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEBAPDw8QDw8PEA8PEA8VDxUPDw8QFREWFhUVFRUYHiggGBolHRUVITEhJSkrLi4uFx8zODMsNyguLisBCgoKDg0OFxAPGi0fIB0rLS0vLS0tLS0tLS0tKy0tLS0rLS0tLS0rLS0tLS0tLS0tKy0rKy0rLSstLTctLS0tLf/AABEIAOEA4QMBIgACEQEDEQH/xAAbAAADAQEBAQEAAAAAAAAAAAAAAgMBBwYFBP/EAEQQAAEDAgMDCgMDCQcFAAAAAAEAAgMEEQUSIRMxUQYHFCIyQWFxkbFScoFCksEjVWJzgpOhs9IVJDM1dJTRFiU0orL/xAAaAQADAQEBAQAAAAAAAAAAAAABAgMABAUG/8QAIhEBAQACAgIDAQEBAQAAAAAAAAECERIhAzETQVFhgUIE/9oADAMBAAIRAxEAPwDl9RI7O/rO7bvtHiVPau+J33itqe2/53e5U16SR9q74nfeKNq74nfeKRCwH2jvid6lG1d8TvvFIhFlNq74nepTCV3xO9SpBMFi1QSu+J3qUwld8TvvFSCYIlqold8TvvFOJHfE77xUgmCaJ1YSH4neqdsh+J3qohUamSyXa8/EfVO154n1UWlUaniOS7XnifVUDzxPqoNKq0pojku1x4n1VGuPEqDSqtTxz5LNPiVUO8VBpVWlPEclmOTgqQKZpTxHJYeadqk0qjSmiVOtSgrb6IlfW9ULEJVNOUVPbf8AO73KmqVPbf8AO73KmvKfYhCELAEIQizQmCULQsUwTBIE4RLTBOEgKYJiVQJ2qYKcJkqqCqNUmlUaUyWUVaVRpUmqjSniGUVaqtKiCqNKaVHKLgp2lSBTgp4hlFmlUaVFpTgp4lYqFQKIKcFNtKxUHxWqYK26Oy67fat4lCy54oU9q6cqqe2/53e5U1Sp7b/nd7lTXmvrQhCFgCEIRZoWrFqwGC0LAtCMLTBMEgTIksUCdpUwnCZOqNThTBThNErFmlUBUGlUaU0SyizVRpUQU4KeI5R+gOTtKi0pwU0qGUWa5UBUAU4KeVKxYFOCohya6KdioKa6kCtv4o7Lxeht4/wQkuhLtXi5bU9t/wA7vdTVKjtv+d3uUi899OxCChZghCLLNsBMlWhYDBalTBEpgtCULQiWqApgUgTAoksUBTgqQKcFMnYqCqAqIKcJolYs0qgKgCqAppUsos1yoCoApwU0qVxWDlQFQDk7SmlSuKwcmBUQU2ZNtO4rArcykCjMjsvF6lCRCTanFzCo7b/nd7qapUDrv+d3uUi4n0BUJrLFmZZFlqFhYhahENhasWrA0LbrAun8k+T8FDSxYlXRNnqqgZqSmd2I2WuJHg6XtY+GYDfdC5aLlZJbfTwNNg1VIM0VHVyt+JlLNI0/VrSFccna7831/wDsZ/6F2WnhxiqAkEraaMi7GEiIZfABrjbzVDyYxU769v7+X+lJz17sS52+sLXGBydrvzfX/wCxn/oSz4PVRtzS0dXE0b3PpZY2j6uaAu0jkvio3V4/fS/0pJ6XGaYbTatqWgXcwHa3b4tc0H7uqPyflhblfvCuGtcqAro3KPBIMQppa6jiEFbTNL6mmaOpOzeXtA3O0cfHUG+hXNmlVwz37CyWbizSmBUgUwKptKxdpTNKiCnBTSp3FYFOHKAKYOR2ncVg5MHKIcmzJtkuK2ZF1LMgnRHZeL2OXzQi6xJtTi5nUDrv+Z3uVJWqB13/ADO9yp2XM9fZbIsmWLNstkJrIWHZbIstQszEIQsy1HEHyxRu7L5I2O+VzwD/AAK7xPCJ8bbC4AxUrGBre4hsQeB95w9FwvDP8eD9fD/Mau74P/n1R8r/AP4jSZfd/lR83fGftjoIavHTcrXw4hJS1MbWRXbsni9y1wGVxPfc3Hgbjz9mvFc5uE7Sl6UwflaW7zbe6A6Pb9NHfs+K4/FxuWsvt1eWZcd4+49lFIHAEG4IBBG4gpiF4fm6x7as2D3XLeyeOn4/gV7i6Xy+O4Zca3i8k8mO3OzCKfHAxgtHUtJc3uIka6//ALMuuKYjEGTzxjsxzzRjybI5o9l3DH/88o/1cfvKuI42f71Vf6qp/nPXd473L/HFjNcp/X5wUwKkCnBV5QsVBTByiCnBTQliocmDlG6YFHZLitdaHKQK3MjslxVutLt6kCguW2Xi9uhZfwQlU4uczjrv+Z3up2V5x13/ADO91Oynp27IssqELLLabZLLLJ7LEB2SyE1lllhYssmWLDt+jDB+Xg/Xw/zGrvGENtj1T8rj9CyM/iuCUsoZJHIRcRyMkI7yGuDjb0XdsQrG0+LxVhP5CriY7P3ZXMay9+AysP1U8vdn7Kj5f+cvyve4jXxwRPmmeGRxtLnOPcPcnwC8TVcsHyVFVSupwKQU87hPrYs2Vw6/Zym69jiWHxVMRilaHxu8fDQgjvXn8N5BQx2a+eonha67ad8h2Fu4OYO1Y623eC4/HwkvL27Lu3r05hyLxAxzMsbEEAe7f46fVd4pJg9jXt3OAI+q8RiHNux9RNUxzmHaEujibGMjH5Rv8MwJsLb163CaMwRCN789rm9rAX3geF7+qt/6fLh5JLPaPjwvjzy/K8hj4/77R/q4/eZcOxs/3ur/ANVU/wA5y7VS1TanGHVDSDBSRuvJ9nKxpF7/ADOcfouHV9RtJppRulmllHk95d+KrhNWT8iOHfK/tTBWgpAVt1cbFQVoKndbdGUliuZaCpAproluKoK26ldbmW2XirmWFyTMscdD5I7DT310IuhJtTTwE46zvmd7qdlecdZ3zO91OyOh2nZBCpZZZbQ7TsssqWVqOikmeIoY3yyO3MY0vcfoO5CjK/HZYvuV/JWuhYZJqKeONou55ju1o4ktvYea+fh+HTVD9nTxPmkyl2Rjczsotc24aj1Scpfs/b8SF+rEKCWB5inifDIACWPGVwB3GytW4JUwxsmmp5YoZMuSVzCGOzC7bHxGq24L5y6FyQ5WU8lM3DMUcY44v/ErBvh17En6IubHdbQ2sCvIR8n6t0TahtLMYHZcsoYSx13ZRY+J0X6/+jMR/N9V+6KXK437HW5qzp1ihoMRhaBQ1cVTT6ZC2VjmZe6wdcAeAK/UZsc+GM/uf+Vw/EcIqqXL0iCam2mYszAx58ts1uNrt9VU4NW7DpWwqejZNpt7O2eT4r8PFJe+7q/4n8Mnq2O1ibHD9mMfuf8AlflrqHEpWkVtXDSwfbLpWMbbxy7x4Erhm2d8b/vFUpqaWd7Yo2STyHsxtDpHeJA/FHjrvqf43wy+7a97yt5V00NM/DcLdtRMMtZW90jdxjj0s5pBIuNLGwvclc8BX1cT5MVtOza1FHPFHpeRzLsHmRew81+HD6CWd4ip4nzSEEiNjcziBvNuCbHU73tTjrqRFaCrYhQSwP2VRE+GSwdke3K7Kb2NuGhX7MK5OVlS3PTUk8zAbZ2s6l+AcbApuU9hp84FaCv04lhc9O7JUwSQPIuA9hbmHfa+h+ivTYBVyQ9IjpZnwWc7atjJZZpIcb+Fj6I8572HGvwXTAqYK26bZdKByLpLoutsNKXWOOhS3WOOh8isGnRVqLISbPp4aYdZ3zO91MhfomHWd8zvdTyq2nLySssLVUtWELaGZJELo/M5jtJTOqGVUkcEsxj2cshDGOa292ZzoDcg27/oueEL0/IrlJT0e3bU0Qq2ThgJu0lrW36uR4sRc3vdR82NuFkW8WWsnQuV2F4nJR1WwxGGtp5WOJj6O2ObZDrObHKxxa4kC1iNQV8/mjww02H1OJ7F00szX7CNrSZJIo72a0b+s8H6BpXzK7nKp46aSmwugNJtc13lscYYXizntYwkF9t19N177lDFOdBzaanpsMifRCANYXPEUt4msytYAQRvsSfBccw8muOnVc8N72+lz2YNtIKbE2MLC1rYZ2luV7WP1jzDuLXOLf2176mpIJsNpKapDXR1FNTxZCbF7tiHAN/SGUkW16q5bFzmbWhno8ShkqnztkZto9nFZjm9XqgAZmm5vbuC/Jym5ftqMPpaOKGaGWmdTOE+dts0UZbdtjcG+oQ+PO6n4Mzx9uh8osPNBgEkLH53UjGmOQt7WWpD2Ejjuujmo5TVNfT1MlW5jnxTiNpbGIwG7Jrtw36krwmNc53SsNkopqd/SZI2xvnaWiIuDgc2XeL23cSvx83fLyPDYZ4pKeWYzSiUFjmgNAjDbEOPgj8V43c7bnN9PnPxatxuqoqWocxx2jmtLIxHkjflMrjbg1l/p4rvNmF5w3oz+i9Dttch6OW32exzbs2XWy4JzecpoMNmkqJqeWeQxiKPI5o2YJu++bvNmj6Hivpt52MQ6TtTIOi7bN0XZRX2GfsZ8t75dL33o5+PK9Semxyn28hygwh1JVT0j7kwSFgcfts3sf8AVpBXXeaeBlNg1RiEcQkqXdJe7TrOEOYMjvvt1b2/SK55zhcpoMRnjqYYJYJBHspc7muEgabxkZTvF3eo4L9HIDl7JhueJ0e3pZHZ3R5sr2PsBmYTpqALg6d+nfTKZZYQJqV+l3OziL4J439Hftm5RKIbCBrtDYXIdcGwzfx3L1HMrg5hpanFHRue97XxU7Gtu90cerg0Dvc8Zf2Avm4vzmUJp54aPCWsdUtLZDLHE2Ikg6lsZJfa9wLjzC/NW86Zjo6ekwuGSkMGzZtJNnLeNrCCA03GYusb248VO45Wak0bc32+7zzYQaihpsTbE+KWJjGzRubaRkc1rB43gsebftFeiwLG6eroIIMNxGGhnjjjbsyyOSSMtbZzTC4gkX7xv4rwWH86hfSVFJikMlZtxJHtIxFFaJ7MpaQLajUghPQ8v8K2MEdTgxe6mjZHG4NhmtkFgczy0+PqkuGWta9DLNpc5mB4lJWUUdVLFUmcilppYojEzOXguL47nKbEEkG1mHguuUEbaU0mHR08joBTSAzZCYmFmUBrza133efp4rls3OzHJWxVMtHJsKVknR4mvYX7aQBpkkJ00bdoA3Zjqe75eIc7Ne6pdJBIIqbaNcymdFC4iMWu1z8pNzY3IOl9EbhnlJNem3jO3n+WuBmirp6W1ow7aQ+MDySz01b+yV8S69hzjcsIMSMEkdNLBNCHsc5zmObJG6xA01uCNPmK8bddfjt4zaOUm+j3RdJdbdOXRwVjjofIpVjzofIohp0y6EIUz6eOlHWd5n3SZVeUanzKQhdenlcki1KWqxCUhDRpkiQlLVYhKQho8qRCQhVISkIWHmT7+HYPTPgpJJZRE90kpmaX2NTC2XKGRX3SXs3T4832Tf8ANJRRxiskFP0nY1xpGRZ5A2OO8xDiWEOJOza0XNte86L5Jcerq6zblozGzbm5yju110TQ1cjHF8cssb3XzPZK9j3XNzdwNzrrqoXDL9Xmcfa/sSDaYjCXFphkihppC42ilke4NbJ3EXAYSd2ru5I3DoY8RlpZKcPY2N5DHSysdG9lEZiLscCesLEG+m6y+AXGxF3WdYuGY2cQSRcd+87+KHTPzF5e8vN7vzkvN25Td2/dp5Jfjy/TzKPsYTSwPpp6iWKIOFRHHG1xqnMY18UjsrRCS4m7Rq/TTeo0dHHJRyOZG11TG2eaQyGZtoWZetA5p2bi27szXam+nBfOpqyWMOEU00Qd2gyV8Yda9rhpF96QVcgYYhLIInG7ohI4RuPEsBsfqtwppY/bhsDBTzVDoOkuZNTwiIuka2NsjZSZHbMhxuYw0agXJ37lM0YNGJww7TpkkRIzECMQseBbwLjqvy01VJGc0UskTrZS6OR0biOBLSDbwRFXSsa5rJpmNfcva2Z7GvJ0Jc0GztNNVuN2aWPtNwFv9nGfTpNjVNbtmh3RGv2ZGyvf4pM1uy1Xq8Ip20AmDWbXolNNdsk7pxLJOW5nsP5NsJa1wuNc2Ud+vmds698775dnfO6+ztbJv7Nja26yNu/439jZ9t3+He+Tf2b65dyW4Zfptx6E4bFsyzo5BGGNr+l55LmUwiTJa+TJmOzta9xe99F+WpoojRMmhjbnjbH0l7jK2Zr5JHBpYD+TfE6zQCOsO9fJNZJs9jtZdje+x2rtle975L5b/RY+skLGxOlkdEw3bEZHGNp/RYTYbzuC3G/rdJICy6FUDXQsQsGjXRdLdF1mNdY/cfIoulfuPkVm06ddalQk2LzMg1PmUparyDU+ZSELv08HkiWpS1XLUpaho0yQLUpCs5qUhCxSZIEJCFYtSOCXSkyRISkKrgkcEqsqRCQhVISEJapKmQlKoQkIQUlIUioQlKU8IhassgaMKxaUqxghCCgwWpULCZCVaszbrHnQ+RRdK86HyKwOn3QsQkF8SQanzKUhWc3U+ZSlq9PT5nkiQlLVYtSEIWGmSJCQhWLUrglsVmSBCmQv0OCm4JbFcag4JHBWIUyEtVlSISFVISOS1aVEhIrEKZSqypkJbJylKVSEKwpilKU8KVi1YVjMWLViAhCEICEIQiwWP3HyK1Y/cfIrM6chCEuhfMeNSlLVZwSuC9XT5HkkWpHBVLUpCFPKgQpuC/RZTcEtisqBSEKzgkcEliuNQcFMhWcFNwS1fGouSEKpCm4JKtjUikcqkKZCWqypFKVQpClVhEpCZKUqkKlTLCgaFWLViBgEICEBCEIWYLH7j5FasfuPkUWdOQhCBn43BKWqpSFer0+M7TLVNysUhQp5tEhI4KxU3JVcUXBTKq5TcfFJVsUXBI4Krj4qTj4pKvik5TKq4hScQlq2KblNwVHOHEKbnDiElWxIVMqjnDiFMuHEeqWq4lKUrXOHEeqUvHEeqVSMKVaXjiPVLnHEeqB4FhWF44j1WF44j1WM0IS5xxHqjOOI9UpjIS5xxHqjOOI9VmMsfuPkVmccR6rHvFjqNx70WdQQi6xLsz6x3LChC9KvlWNWtQhC+jfQG9KVqEo4latKEJKvixY9CFOr4s71hQhL9Kxi0oQgriFjVqElUjAtQhBSMKUrUJaeMCChCJoxCEJaMCEIQEJX7j5IQiz1yEIUmf/Z" style="width:56px;height:56px;object-fit:cover;border-radius:16px"></div>
   <div class="ld-bar"><div class="ld-bar-fill" id="ldbar"></div></div>
-  <div id="ld-txt">Renderizando...</div>
+  <div id="ld-txt">Iniciando sistema...</div>
 </div>
 
 <div class="app">
@@ -1098,14 +503,14 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
   <div class="header">
     <div class="h-left">
       <div class="h-title">Painel SUS</div>
-      <div class="h-pill" id="hPill">Atualizar via PDF</div>
-      <div class="h-pill" id="hComp" style="background: var(--pur-d); color: var(--pur); border-color: rgba(139, 92, 246, 0.25); display: inline-block;">07/2026</div>
+      <div class="h-pill" id="hPill">Metas AIH's</div>
+      <div class="h-pill" id="hComp" style="background:var(--pur-d);color:var(--pur);border-color:rgba(139,92,246,.25);display:none"></div>
     </div>
     <div class="h-right">
       <div class="h-upd">
         <div class="h-upd-lbl">Última atualização</div>
-        <div class="h-upd-val" id="upT">10/08/2026, 14:00</div>
-        <div class="h-upd-nxt" id="upN">Próxima: 14:00</div>
+        <div class="h-upd-val" id="upT">—</div>
+        <div class="h-upd-nxt" id="upN"></div>
       </div>
       <span class="rcnt" id="rcnt" style="display:none"></span>
       <button class="btn-exp" onclick="doExport()">↓ Exportar CSV</button>
@@ -1118,7 +523,7 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
   <div class="mod on" id="mod0">
 
     <!-- KPIs -->
-    <div class="kpis" id="kpi0"><div class="kpi-card"><div class="kpi-top"><div class="kpi-title">Total AIH's Realizadas</div><div class="kpi-icon">📋</div></div><div class="kpi-value" style="">420</div></div><div class="kpi-card"><div class="kpi-top"><div class="kpi-title">Meta Mensal (Ago)</div><div class="kpi-icon">🎯</div></div><div class="kpi-value" style="">1.635</div></div><div class="kpi-card"><div class="kpi-top"><div class="kpi-title">Diferença vs Meta</div><div class="kpi-icon">📉</div></div><div class="kpi-value" style="color:var(--red)">-1.215</div></div><div class="kpi-card"><div class="kpi-top"><div class="kpi-title">Perc.% de Atingimento</div><div class="kpi-icon">🕘</div></div><div class="kpi-value" style="">25.7%</div></div></div>
+    <div class="kpis" id="kpi0"></div>
 
     <!-- Main 2-col grid -->
     <div class="main-grid">
@@ -1128,7 +533,7 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
 
         <!-- PAINEL SUS PRODUÇÃO -->
         <div class="data-card">
-          <div class="data-card-header">PAINEL SUS – PRODUÇÃO MV2000</div>
+          <div class="data-card-header">PAINEL SUS &ndash; PRODUÇÃO MV2000</div>
           <div style="overflow-x:auto">
             <table class="data-table" style="min-width:780px" id="tblPainel">
               <thead><tr>
@@ -1140,7 +545,7 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
                 <th class="tc">DIF</th>
                 <th class="tc">VALOR (DIF)</th>
               </tr></thead>
-              <tbody id="tbMain"><tr style="background:rgba(56,189,248,.04)"><td style="font-weight:700;color:#f1f5f9;padding:13px 14px 6px">CIRURGICA</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class=""><td>Eletivo</td><td class="tc">37</td><td class="tc">R$ 37.276,27</td><td class="tc">82</td><td class="tc">R$ 61.471,63</td><td class="tc dred">-45</td><td class="tc dred">R$ -24.195,36</td></tr><tr class=""><td>Urgencia</td><td class="tc">108</td><td class="tc">R$ 185.363,58</td><td class="tc">344</td><td class="tc">R$ 554.200,76</td><td class="tc dred">-236</td><td class="tc dred">R$ -368.837,18</td></tr><tr class=""><td>CLÍNICO/PEDIATRIA</td><td class="tc">132</td><td class="tc">R$ 210.624,29</td><td class="tc">360</td><td class="tc">R$ 472.909,04</td><td class="tc dred">-228</td><td class="tc dred">R$ -262.284,75</td></tr><tr class=""><td>OBSTETRÍCIA</td><td class="tc">48</td><td class="tc">R$ 40.599,46</td><td class="tc">303</td><td class="tc">R$ 247.857,03</td><td class="tc dred">-255</td><td class="tc dred">R$ -207.257,57</td></tr><tr class="tr-total"><td>TOTAL AIH'S DE MÉDIA COMPLEXIDADE - MAC</td><td class="tc">325</td><td class="tc">R$ 473.863,60</td><td class="tc">1.089</td><td class="tc">R$ 1.336.438,46</td><td class="tc dred">-764</td><td class="tc dred">R$ -862.574,86</td></tr></tbody>
+              <tbody id="tbMain"></tbody>
             </table>
           </div>
         </div>
@@ -1150,7 +555,7 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
           <div class="data-card-header">ALTA COMPLEXIDADE - MAC</div>
           <div style="overflow-x:auto">
             <table class="data-table" style="min-width:780px">
-              <tbody id="tbAlta"><tr class="tr-total"><td>TOTAL AIH'S DE ALTA COMPLEXIDADE - MAC</td><td class="tc">75</td><td class="tc">R$ 431.741,53</td><td class="tc">229</td><td class="tc">R$ 1.426.994,18</td><td class="tc dred">-154</td><td class="tc dred">R$ -995.252,65</td></tr></tbody>
+              <tbody id="tbAlta"></tbody>
             </table>
           </div>
         </div>
@@ -1169,7 +574,7 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
                 <th class="tc">DIF</th>
                 <th class="tc">VALOR (DIF)</th>
               </tr></thead>
-              <tbody id="tbUTI"><tr class=""><td>Diaria UTI ADULTO (UTI II)</td><td class="tc">90</td><td class="tc">R$ 69.242,40</td><td class="tc">330</td><td class="tc">R$ 253.888,80</td><td class="tc dred">-240</td><td class="tc dred">R$ -184.646,40</td></tr><tr class=""><td>Diaria UTI PEDIATRICA (UTI II)</td><td class="tc">66</td><td class="tc">R$ 54.914,64</td><td class="tc">30</td><td class="tc">R$ 24.961,20</td><td class="tc dred">-36</td><td class="tc dgreen">R$ 29.953,44</td></tr><tr class=""><td>Diaria UTI NEONATAL UTIN (TIPO II)</td><td class="tc">0</td><td class="tc">R$ 0,00</td><td class="tc">210</td><td class="tc">R$ 188.344,80</td><td class="tc dred">-210</td><td class="tc dred">R$ -188.344,80</td></tr><tr class=""><td>QUEIMADOS</td><td class="tc">0</td><td class="tc">R$ 0,00</td><td class="tc">30</td><td class="tc">R$ 21.000,00</td><td class="tc dred">-30</td><td class="tc dred">R$ -21.000,00</td></tr><tr class="tr-total"><td>TOTAL GERAL DE DIÁRIAS DE UTI</td><td class="tc">156</td><td class="tc">R$ 124.157,04</td><td class="tc">600</td><td class="tc">R$ 488.194,80</td><td class="tc dred">-444</td><td class="tc dred">R$ -364.037,76</td></tr></tbody>
+              <tbody id="tbUTI"></tbody>
             </table>
           </div>
         </div>
@@ -1182,13 +587,13 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
         <!-- DETALHAMENTO DA PRODUÇÃO -->
         <div class="side-panel">
           <div class="side-panel-header">DETALHAMENTO DA PRODUÇÃO</div>
-          <div class="side-panel-body" id="detDiv"><div style="display:flex;justify-content:space-between;align-items:center;padding:0 0 8px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:4px"><span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(148,163,184,.7)">Descrição</span><span style="display:flex;gap:12px;flex-shrink:0"><span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(148,163,184,.7);min-width:36px;text-align:right">Prod. Total</span><span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(148,163,184,.7);min-width:110px;text-align:right">Total da Conta</span></span></div><div class="side-row"><span>Total FAEC</span><span style="display:flex;align-items:center;gap:12px;flex-shrink:0"><span style="font-size:13px;font-weight:700;color:#f1f5f9;min-width:36px;text-align:right">20</span><strong style="min-width:110px;text-align:right">R$ 162.507,95</strong></span></div><div class="side-row"><span>Total MAC</span><span style="display:flex;align-items:center;gap:12px;flex-shrink:0"><span style="font-size:13px;font-weight:700;color:#f1f5f9;min-width:36px;text-align:right">325</span><strong style="min-width:110px;text-align:right">R$ 473.863,60</strong></span></div><div class="side-row"><span>Média Complexidade</span><span style="display:flex;align-items:center;gap:12px;flex-shrink:0"><span style="font-size:13px;font-weight:700;color:#f1f5f9;min-width:36px;text-align:right">325</span><strong style="min-width:110px;text-align:right">R$ 473.863,60</strong></span></div><div class="side-row"><span>Alta Complexidade</span><span style="display:flex;align-items:center;gap:12px;flex-shrink:0"><span style="font-size:13px;font-weight:700;color:#f1f5f9;min-width:36px;text-align:right">75</span><strong style="min-width:110px;text-align:right">R$ 431.741,53</strong></span></div></div>
+          <div class="side-panel-body" id="detDiv"></div>
         </div>
 
         <!-- CUMPRIMENTO DE INCENTIVO -->
         <div class="side-panel">
           <div class="side-panel-header">CUMPRIMENTO DE INCENTIVO</div>
-          <div class="side-panel-body" id="cumpDiv"><div class="prog-group"><div class="prog-top"><span>Total AIH's Realizadas</span><strong style="">420</strong></div><div class="prog-track"><div class="prog-fill" style="width:26%;background:#22d3ee"></div></div></div><div class="prog-group"><div class="prog-top"><span>Meta Mensal</span><strong style="">1.635</strong></div><div class="prog-track"><div class="prog-fill" style="width:100%;background:#facc15"></div></div></div><div class="prog-group"><div class="prog-top"><span>Diferença vs Meta</span><strong style="color:#f87171">-1.215</strong></div><div class="prog-track"><div class="prog-fill" style="width:74%;background:#f87171"></div></div></div><div class="prog-group"><div class="prog-top"><span>Perc.%</span><strong style="color:#22d3ee">25.7%</strong></div><div class="prog-track"><div class="prog-fill" style="width:26%;background:#22d3ee"></div></div></div></div>
+          <div class="side-panel-body" id="cumpDiv"></div>
         </div>
 
       </div><!-- /right col -->
@@ -1201,17 +606,17 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
 
   <!-- ════ MÓDULO 1 — VALORES POR AIH's ══════════════════════ -->
   <div class="mod" id="mod1">
-    <div class="krow krow-sm" id="kpi1"><div class="kpi" style="--k-accent:#3B82F6;--k-accent-d:#3B82F620;--k-accent-b:#3B82F650"><div class="kpi-top"><div class="kpi-lbl">Total AIHs</div><div class="kpi-ico">📋</div></div><div class="kpi-val">420</div><div class="kpi-bottom"><div class="kpi-trend neu"></div></div></div><div class="kpi" style="--k-accent:#06B6D4;--k-accent-d:#06B6D420;--k-accent-b:#06B6D450"><div class="kpi-top"><div class="kpi-lbl">Ticket Médio / AIH</div><div class="kpi-ico">🏷</div></div><div class="kpi-val">R$ 2.543,13</div><div class="kpi-bottom"><div class="kpi-trend neu">Valor médio por internação — R$ 1,07 Mi total</div></div></div></div>
+    <div class="krow krow-sm" id="kpi1"></div>
     <div class="cg c12">
       <div class="cc fade-in">
         <div class="ct">Faturamento por Especialidade</div>
         <div class="cs">Total Conta R$ — composição por grupo clínico</div>
-        <div id="ch4" style="height: 240px; min-height: 240px;"><div id="apexchartst7wiuwip" class="apexcharts-canvas apexchartst7wiuwip" style="width: 0px; height: 240px;"><svg id="SvgjsSvg1048" width="0" height="240" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><foreignObject x="0" y="0" width="0" height="240"><div class="apexcharts-legend" xmlns="http://www.w3.org/1999/xhtml"></div></foreignObject><g id="SvgjsG1050" class="apexcharts-inner apexcharts-graphical"><defs id="SvgjsDefs1049"></defs></g></svg></div></div>
+        <div id="ch4" style="height:240px"></div>
       </div>
       <div class="cc fade-in">
         <div class="ct">Custo Médio de Faturamento por Especialidade</div>
         <div class="cs">Valor R$ médio por AIH — comparativo entre especialidades</div>
-        <div id="ch5" style="height: 240px; min-height: 255px;"><div id="apexcharts4p2x3vx4" class="apexcharts-canvas apexcharts4p2x3vx4" style="width: 0px; height: 240px;"><svg id="SvgjsSvg1051" width="0" height="240" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><foreignObject x="0" y="0" width="0" height="240"><div class="apexcharts-legend" xmlns="http://www.w3.org/1999/xhtml"></div></foreignObject><g id="SvgjsG1053" class="apexcharts-inner apexcharts-graphical"><defs id="SvgjsDefs1052"></defs></g></svg></div></div>
+        <div id="ch5" style="height:240px"></div>
       </div>
     </div>
     <div class="sh">Ranking de Procedimentos <span class="tag tag-b">R_PROD_FINANCIAMENTO · Top 15</span></div>
@@ -1219,18 +624,18 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
       <div class="cc fade-in">
         <div class="ct">Mais Realizados — Quantidade</div>
         <div class="cs">Procedimentos por nº de AIH's — col. E da planilha R_PROD_FINANCIAMENTO</div>
-        <div id="rkQ" style="max-height:310px;overflow-y:auto;padding-right:2px"><div class="rkr"><div class="rkn">1</div><div class="rknm" title="DEBRIDAMENTO DE ULCERA / DE T">DEBRIDAMENTO DE ULCERA / DE T</div><div class="rkbg"><div class="rkf" style="width:100.0%"></div></div><div class="rkv">39</div></div><div class="rkr"><div class="rkn">2</div><div class="rknm" title="DIAGNOSTICO E/OU ATENDIMENTO">DIAGNOSTICO E/OU ATENDIMENTO</div><div class="rkbg"><div class="rkf" style="width:84.6%"></div></div><div class="rkv">33</div></div><div class="rkr"><div class="rkn">3</div><div class="rknm" title="PARTO NORMAL">PARTO NORMAL</div><div class="rkbg"><div class="rkf" style="width:71.8%"></div></div><div class="rkv">28</div></div><div class="rkr"><div class="rkn">4</div><div class="rknm" title="OPERAÇÃO CESARIANA EM GESTA">OPERAÇÃO CESARIANA EM GESTA</div><div class="rkbg"><div class="rkf" style="width:56.4%"></div></div><div class="rkv">22</div></div><div class="rkr"><div class="rkn">5</div><div class="rknm" title="TRATAMENTO CLÍNICO DE PACIENT">TRATAMENTO CLÍNICO DE PACIENT</div><div class="rkbg"><div class="rkf" style="width:53.8%"></div></div><div class="rkv">21</div></div><div class="rkr"><div class="rkn">6</div><div class="rknm" title="TRATAMENTO DE INTERCORRÊNCI">TRATAMENTO DE INTERCORRÊNCI</div><div class="rkbg"><div class="rkf" style="width:43.6%"></div></div><div class="rkv">17</div></div><div class="rkr"><div class="rkn">7</div><div class="rknm" title="PARTO NORMAL EM GESTAÇÃO DE">PARTO NORMAL EM GESTAÇÃO DE</div><div class="rkbg"><div class="rkf" style="width:41.0%"></div></div><div class="rkv">16</div></div><div class="rkr"><div class="rkn">8</div><div class="rknm" title="TRATAMENTO CONSERVADOR DE T">TRATAMENTO CONSERVADOR DE T</div><div class="rkbg"><div class="rkf" style="width:35.9%"></div></div><div class="rkv">14</div></div><div class="rkr"><div class="rkn">9</div><div class="rknm" title="TRATAMENTO DE OUTRAS DOENCA">TRATAMENTO DE OUTRAS DOENCA</div><div class="rkbg"><div class="rkf" style="width:33.3%"></div></div><div class="rkv">13</div></div><div class="rkr"><div class="rkn">10</div><div class="rknm" title="ESVAZIAMENTO DE UTERO POS-AB">ESVAZIAMENTO DE UTERO POS-AB</div><div class="rkbg"><div class="rkf" style="width:33.3%"></div></div><div class="rkv">13</div></div><div class="rkr"><div class="rkn">11</div><div class="rknm" title="TRATAMENTO DE OUTRAS DOENÇA">TRATAMENTO DE OUTRAS DOENÇA</div><div class="rkbg"><div class="rkf" style="width:30.8%"></div></div><div class="rkv">12</div></div><div class="rkr"><div class="rkn">12</div><div class="rknm" title="OPERAÇÃO CESARIANA COM LAQU">OPERAÇÃO CESARIANA COM LAQU</div><div class="rkbg"><div class="rkf" style="width:28.2%"></div></div><div class="rkv">11</div></div><div class="rkr"><div class="rkn">13</div><div class="rknm" title="TRATAMENTO CIRÚRGICO DE FRAT">TRATAMENTO CIRÚRGICO DE FRAT</div><div class="rkbg"><div class="rkf" style="width:23.1%"></div></div><div class="rkv">9</div></div><div class="rkr"><div class="rkn">14</div><div class="rknm" title="TRATAMENTO DE ACIDENTE VASCU">TRATAMENTO DE ACIDENTE VASCU</div><div class="rkbg"><div class="rkf" style="width:20.5%"></div></div><div class="rkv">8</div></div><div class="rkr"><div class="rkn">15</div><div class="rknm" title="TRATAMENTO DE INTERCORRENCI">TRATAMENTO DE INTERCORRENCI</div><div class="rkbg"><div class="rkf" style="width:20.5%"></div></div><div class="rkv">8</div></div></div>
+        <div id="rkQ" style="max-height:310px;overflow-y:auto;padding-right:2px"></div>
       </div>
       <div class="cc fade-in">
         <div class="ct">Mais Rentáveis — Faturamento R$</div>
         <div class="cs">Procedimentos por Total Conta — col. H da planilha R_PROD_FINANCIAMENTO</div>
-        <div id="rkV" style="max-height:310px;overflow-y:auto;padding-right:2px"><div class="rkr"><div class="rkn">1</div><div class="rknm" title="REVASCULARIZAÇÃO MIOCÁRDICA">REVASCULARIZAÇÃO MIOCÁRDICA</div><div class="rkbg"><div class="rkf" style="width:100.0%"></div></div><div class="rkv">R$ 60.240,02</div></div><div class="rkr"><div class="rkn">2</div><div class="rknm" title="DEBRIDAMENTO DE ULCERA / DE T">DEBRIDAMENTO DE ULCERA / DE T</div><div class="rkbg"><div class="rkf" style="width:93.7%"></div></div><div class="rkv">R$ 56.472,33</div></div><div class="rkr"><div class="rkn">3</div><div class="rknm" title="TRATAMENTO DE OUTRAS DOENCA">TRATAMENTO DE OUTRAS DOENCA</div><div class="rkbg"><div class="rkf" style="width:92.6%"></div></div><div class="rkv">R$ 55.765,54</div></div><div class="rkr"><div class="rkn">4</div><div class="rknm" title="TRANSPLANTE DE RIM (ORGAO DE">TRANSPLANTE DE RIM (ORGAO DE</div><div class="rkbg"><div class="rkf" style="width:69.2%"></div></div><div class="rkv">R$ 41.704,33</div></div><div class="rkr"><div class="rkn">5</div><div class="rknm" title="TRATAMENTO DE OUTRAS DOENÇA">TRATAMENTO DE OUTRAS DOENÇA</div><div class="rkbg"><div class="rkf" style="width:68.7%"></div></div><div class="rkv">R$ 41.399,76</div></div><div class="rkr"><div class="rkn">6</div><div class="rknm" title="TROCA VALVAR C/ REVASCULARIZA">TROCA VALVAR C/ REVASCULARIZA</div><div class="rkbg"><div class="rkf" style="width:44.7%"></div></div><div class="rkv">R$ 26.955,84</div></div><div class="rkr"><div class="rkn">7</div><div class="rknm" title="IMPLANTE DE MARCAPASSO DE CÂ">IMPLANTE DE MARCAPASSO DE CÂ</div><div class="rkbg"><div class="rkf" style="width:44.1%"></div></div><div class="rkv">R$ 26.556,21</div></div><div class="rkr"><div class="rkn">8</div><div class="rknm" title="PLÁSTICA VALVAR E/OU TROCA VA">PLÁSTICA VALVAR E/OU TROCA VA</div><div class="rkbg"><div class="rkf" style="width:43.3%"></div></div><div class="rkv">R$ 26.106,01</div></div><div class="rkr"><div class="rkn">9</div><div class="rknm" title="TRATAMENTO DE TRANSTORNOS R">TRATAMENTO DE TRANSTORNOS R</div><div class="rkbg"><div class="rkf" style="width:39.9%"></div></div><div class="rkv">R$ 24.047,06</div></div><div class="rkr"><div class="rkn">10</div><div class="rknm" title="TRANSPLANTE AUTOGENICO DE CE">TRANSPLANTE AUTOGENICO DE CE</div><div class="rkbg"><div class="rkf" style="width:39.1%"></div></div><div class="rkv">R$ 23.531,23</div></div><div class="rkr"><div class="rkn">11</div><div class="rknm" title="OPERAÇÃO CESARIANA EM GESTA">OPERAÇÃO CESARIANA EM GESTA</div><div class="rkbg"><div class="rkf" style="width:38.7%"></div></div><div class="rkv">R$ 23.321,62</div></div><div class="rkr"><div class="rkn">12</div><div class="rknm" title="TRANSPLANTE AUTOGENICO DE CE">TRANSPLANTE AUTOGENICO DE CE</div><div class="rkbg"><div class="rkf" style="width:38.3%"></div></div><div class="rkv">R$ 23.091,87</div></div><div class="rkr"><div class="rkn">13</div><div class="rknm" title="TRATAMENTO DE INTERCORRENCI">TRATAMENTO DE INTERCORRENCI</div><div class="rkbg"><div class="rkf" style="width:37.4%"></div></div><div class="rkv">R$ 22.523,35</div></div><div class="rkr"><div class="rkn">14</div><div class="rknm" title="DERIVAÇÃO VENTRICULAR EXTERN">DERIVAÇÃO VENTRICULAR EXTERN</div><div class="rkbg"><div class="rkf" style="width:36.7%"></div></div><div class="rkv">R$ 22.094,70</div></div><div class="rkr"><div class="rkn">15</div><div class="rknm" title="TRATAMENTO DE ACIDENTE VASCU">TRATAMENTO DE ACIDENTE VASCU</div><div class="rkbg"><div class="rkf" style="width:31.6%"></div></div><div class="rkv">R$ 19.025,82</div></div></div>
+        <div id="rkV" style="max-height:310px;overflow-y:auto;padding-right:2px"></div>
       </div>
     </div>
     <div class="cc fade-in" style="margin-top:14px">
       <div class="ct">Caráter de Atendimento — Eletivo × Urgência (Colunas Agrupadas)</div>
       <div class="cs">Realizado vs. Contratado — Eletivo (04/2026) e Urgência (05/2026)</div>
-      <div id="ch6" style="height: 190px; min-height: 205px;"><div id="apexchartshuaa3qyc" class="apexcharts-canvas apexchartshuaa3qyc" style="width: 0px; height: 190px;"><svg id="SvgjsSvg1054" width="0" height="190" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><foreignObject x="0" y="0" width="0" height="190"><div class="apexcharts-legend" xmlns="http://www.w3.org/1999/xhtml"></div></foreignObject><g id="SvgjsG1056" class="apexcharts-inner apexcharts-graphical"><defs id="SvgjsDefs1055"></defs></g></svg></div></div>
+      <div id="ch6" style="height:190px"></div>
     </div>
   </div>
 
@@ -1245,12 +650,12 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
       <th>Meta R$</th><th>Dif. Diárias</th><th>Dif. R$</th><th style="min-width:118px">%</th>
     </tr></thead><tbody id="tbU2"></tbody></table></div>
     <div class="cg c2">
-      <div class="cc fade-in"><div class="ct">Distribuição de Diárias por Tipo de UTI</div><div class="cs">Adulto · Pediátrica · Neonatal · Queimados</div><div id="ch7" style="height: 240px; min-height: 240px;"><div id="apexchartst3h27pxv" class="apexcharts-canvas apexchartst3h27pxv" style="width: 0px; height: 240px;"><svg id="SvgjsSvg1057" width="0" height="240" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><foreignObject x="0" y="0" width="0" height="240"><div class="apexcharts-legend" xmlns="http://www.w3.org/1999/xhtml"></div></foreignObject><g id="SvgjsG1059" class="apexcharts-inner apexcharts-graphical"><defs id="SvgjsDefs1058"></defs></g></svg></div></div></div>
-      <div class="cc fade-in"><div class="ct">Realizado × Contrato por UTI</div><div class="cs">Diárias realizadas vs. diárias contratadas</div><div id="ch8" style="height: 240px; min-height: 255px;"><div id="apexchartsad969guu" class="apexcharts-canvas apexchartsad969guu" style="width: 0px; height: 240px;"><svg id="SvgjsSvg1060" width="0" height="240" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><foreignObject x="0" y="0" width="0" height="240"><div class="apexcharts-legend" xmlns="http://www.w3.org/1999/xhtml"></div></foreignObject><g id="SvgjsG1062" class="apexcharts-inner apexcharts-graphical"><defs id="SvgjsDefs1061"></defs></g></svg></div></div></div>
+      <div class="cc fade-in"><div class="ct">Distribuição de Diárias por Tipo de UTI</div><div class="cs">Adulto · Pediátrica · Neonatal · Queimados</div><div id="ch7" style="height:240px"></div></div>
+      <div class="cc fade-in"><div class="ct">Realizado × Contrato por UTI</div><div class="cs">Diárias realizadas vs. diárias contratadas</div><div id="ch8" style="height:240px"></div></div>
     </div>
     <div class="cg c2">
-      <div class="cc fade-in"><div class="ct">Meta de Diárias Mensais UTI</div><div class="cs">Projeção de contratos UTI ao longo do ano</div><div id="ch9" style="height: 200px; min-height: 215px;"><div id="apexcharts3ulooc9w" class="apexcharts-canvas apexcharts3ulooc9w" style="width: 0px; height: 200px;"><svg id="SvgjsSvg1063" width="0" height="200" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><foreignObject x="0" y="0" width="0" height="200"><div class="apexcharts-legend" xmlns="http://www.w3.org/1999/xhtml"></div></foreignObject><g id="SvgjsG1065" class="apexcharts-inner apexcharts-graphical"><defs id="SvgjsDefs1064"></defs></g></svg></div></div></div>
-      <div class="cc fade-in"><div class="ct">Custo Médio por Diária de UTI</div><div class="cs">Valor R$ por diária realizada por tipo</div><div id="ch10" style="height: 200px; min-height: 215px;"><div id="apexchartsv309gx2b" class="apexcharts-canvas apexchartsv309gx2b" style="width: 0px; height: 200px;"><svg id="SvgjsSvg1066" width="0" height="200" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><foreignObject x="0" y="0" width="0" height="200"><div class="apexcharts-legend" xmlns="http://www.w3.org/1999/xhtml"></div></foreignObject><g id="SvgjsG1068" class="apexcharts-inner apexcharts-graphical"><defs id="SvgjsDefs1067"></defs></g></svg></div></div></div>
+      <div class="cc fade-in"><div class="ct">Meta de Diárias Mensais UTI</div><div class="cs">Projeção de contratos UTI ao longo do ano</div><div id="ch9" style="height:200px"></div></div>
+      <div class="cc fade-in"><div class="ct">Custo Médio por Diária de UTI</div><div class="cs">Valor R$ por diária realizada por tipo</div><div id="ch10" style="height:200px"></div></div>
     </div>
   </div>
 
@@ -1260,28 +665,28 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
 
     <div class="pdf-step">1 · Envie os 4 relatórios PDF do MV2000</div>
     <div class="pdf-grid">
-      <div class="pdf-drop" id="drop-elet" onclick="document.getElementById('file-elet').click()" data-wired="1">
+      <div class="pdf-drop" id="drop-elet" onclick="document.getElementById('file-elet').click()">
         <input type="file" id="file-elet" accept="application/pdf">
         <div class="pdf-drop-ic">🗂️</div>
         <div class="pdf-drop-lbl">R_DEMONS_ESPEC_AIH — ELETIVO</div>
         <div class="pdf-drop-sub">Demonstrativo de Valores por Especialidade e AIH (caráter eletivo)</div>
         <div class="pdf-drop-file" id="drop-elet-file"></div>
       </div>
-      <div class="pdf-drop" id="drop-urg" onclick="document.getElementById('file-urg').click()" data-wired="1">
+      <div class="pdf-drop" id="drop-urg" onclick="document.getElementById('file-urg').click()">
         <input type="file" id="file-urg" accept="application/pdf">
         <div class="pdf-drop-ic">🚑</div>
         <div class="pdf-drop-lbl">R_DEMONS_ESPEC_AIH — URGÊNCIA</div>
         <div class="pdf-drop-sub">Demonstrativo de Valores por Especialidade e AIH (caráter urgência)</div>
         <div class="pdf-drop-file" id="drop-urg-file"></div>
       </div>
-      <div class="pdf-drop" id="drop-uti" onclick="document.getElementById('file-uti').click()" data-wired="1">
+      <div class="pdf-drop" id="drop-uti" onclick="document.getElementById('file-uti').click()">
         <input type="file" id="file-uti" accept="application/pdf">
         <div class="pdf-drop-ic">🏥</div>
         <div class="pdf-drop-lbl">R_PACIENTES_UTI</div>
         <div class="pdf-drop-sub">Relatório de Pacientes Atendidos na UTI Especializada</div>
         <div class="pdf-drop-file" id="drop-uti-file"></div>
       </div>
-      <div class="pdf-drop" id="drop-fin" onclick="document.getElementById('file-fin').click()" data-wired="1">
+      <div class="pdf-drop" id="drop-fin" onclick="document.getElementById('file-fin').click()">
         <input type="file" id="file-fin" accept="application/pdf">
         <div class="pdf-drop-ic">💳</div>
         <div class="pdf-drop-lbl">R_PROD_FINANCIAMENTO</div>
@@ -1293,24 +698,24 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
     <div class="pdf-step">2 · Confira os valores contratados do mês (só muda se o contrato mudar)</div>
     <div class="pdf-cfg">
       <div class="cs" style="margin:0">Competência e metas/contratos mensais — pré-preenchidos com os últimos valores usados no painel. Ajuste apenas se o contrato deste mês for diferente.</div>
-      <div class="pdf-cfg-grid" id="pdfCfgGrid" data-built="1"><div class="pdf-cfg-fld"><label>Competência</label><input type="text" step="0.01" id="cfg_competencia" value="07/2026"></div><div class="pdf-cfg-fld"><label>Meta AIH (mês)</label><input type="number" step="0.01" id="cfg_meta_aih" value="1635"></div><div class="pdf-cfg-fld"><label>Contrato Eletivo (AIHs)</label><input type="number" step="0.01" id="cfg_elet_co" value="82"></div><div class="pdf-cfg-fld"><label>Meta R$ Eletivo</label><input type="number" step="0.01" id="cfg_elet_m" value="61471.63"></div><div class="pdf-cfg-fld"><label>Contrato Urgência (AIHs)</label><input type="number" step="0.01" id="cfg_urg_co" value="344"></div><div class="pdf-cfg-fld"><label>Meta R$ Urgência</label><input type="number" step="0.01" id="cfg_urg_m" value="554200.76"></div><div class="pdf-cfg-fld"><label>Contrato Clín/Ped (AIHs)</label><input type="number" step="0.01" id="cfg_cli_co" value="360"></div><div class="pdf-cfg-fld"><label>Meta R$ Clín/Ped</label><input type="number" step="0.01" id="cfg_cli_m" value="472909.04"></div><div class="pdf-cfg-fld"><label>Contrato Obstetrícia (AIHs)</label><input type="number" step="0.01" id="cfg_obs_co" value="303"></div><div class="pdf-cfg-fld"><label>Meta R$ Obstetrícia</label><input type="number" step="0.01" id="cfg_obs_m" value="247857.03"></div><div class="pdf-cfg-fld"><label>Contrato Alta Compl. (AIHs)</label><input type="number" step="0.01" id="cfg_alta_co" value="229"></div><div class="pdf-cfg-fld"><label>Meta R$ Alta Compl.</label><input type="number" step="0.01" id="cfg_alta_m" value="1426994.18"></div><div class="pdf-cfg-fld"><label>Contrato Diárias UTI Adulto</label><input type="number" step="0.01" id="cfg_uti_a_co" value="330"></div><div class="pdf-cfg-fld"><label>Valor Diária UTI Adulto (R$)</label><input type="number" step="0.01" id="cfg_uti_a_rate" value="769.36"></div><div class="pdf-cfg-fld"><label>Contrato Diárias UTI Pediátrica</label><input type="number" step="0.01" id="cfg_uti_p_co" value="30"></div><div class="pdf-cfg-fld"><label>Valor Diária UTI Pediátrica (R$)</label><input type="number" step="0.01" id="cfg_uti_p_rate" value="832.04"></div><div class="pdf-cfg-fld"><label>Contrato Diárias UTI Neonatal</label><input type="number" step="0.01" id="cfg_uti_n_co" value="210"></div><div class="pdf-cfg-fld"><label>Valor Diária UTI Neonatal (R$)</label><input type="number" step="0.01" id="cfg_uti_n_rate" value="896.88"></div><div class="pdf-cfg-fld"><label>Contrato Diárias Queimados</label><input type="number" step="0.01" id="cfg_uti_q_co" value="30"></div><div class="pdf-cfg-fld"><label>Valor Diária Queimados (R$)</label><input type="number" step="0.01" id="cfg_uti_q_rate" value="700"></div></div>
+      <div class="pdf-cfg-grid" id="pdfCfgGrid"></div>
     </div>
 
     <div class="pdf-actions">
-      <button class="pdf-btn" id="btnProcessar" onclick="pdfProcessar()">▶ Processar e Pré-visualizar</button>
+      <button class="pdf-btn" id="btnProcessar" onclick="pdfProcessar()" disabled>▶ Processar e Pré-visualizar</button>
       <button class="pdf-btn pdf-btn-ghost" onclick="pdfLimpar()">↺ Limpar</button>
-      <span class="dim" style="font-size:11px;color:var(--txt3)" id="pdfHint">Pronto para processar</span>
+      <span class="dim" style="font-size:11px;color:var(--txt3)" id="pdfHint">Envie os 4 PDFs para habilitar</span>
     </div>
 
     <div class="pdf-log" id="pdfLog">Aguardando arquivos…</div>
 
-    <div id="pdfPreviewWrap" style="display: none;">
+    <div id="pdfPreviewWrap" style="display:none">
       <div class="pdf-step">3 · Prévia do RESUMO — confira antes de aplicar</div>
       <div class="twrap"><table><thead><tr>
         <th style="text-align:left">Indicador</th><th>Produção</th><th>Total Conta</th><th>Contrato</th><th>Meta R$</th><th>Dif.</th>
-      </tr></thead><tbody id="pdfPreviewBody"><tr><td>Eletivo</td><td>37</td><td>R$ 37.276,27</td><td>82</td><td>R$ 61.471,63</td><td>-45</td></tr><tr><td>Urgência</td><td>108</td><td>R$ 185.363,58</td><td>344</td><td>R$ 554.200,76</td><td>-236</td></tr><tr><td>Clínico/Pediatria</td><td>132</td><td>R$ 210.624,29</td><td>360</td><td>R$ 472.909,04</td><td>-228</td></tr><tr><td>Obstetrícia</td><td>48</td><td>R$ 40.599,46</td><td>303</td><td>R$ 247.857,03</td><td>-255</td></tr><tr class="tot"><td>Total Média Complexidade (MAC)</td><td>325</td><td>R$ 473.863,60</td><td>1.089</td><td>R$ 1.336.438,46</td><td>-764</td></tr><tr><td>Alta Complexidade</td><td>75</td><td>R$ 431.741,53</td><td>229</td><td>R$ 1.426.994,18</td><td>-154</td></tr><tr><td>UTI · Diaria UTI ADULTO (UTI II)</td><td>90 dias</td><td>R$ 69.242,40</td><td>330</td><td>R$ 253.888,80</td><td>-240</td></tr><tr><td>UTI · Diaria UTI PEDIATRICA (UTI II)</td><td>66 dias</td><td>R$ 54.914,64</td><td>30</td><td>R$ 24.961,20</td><td>-36</td></tr><tr><td>UTI · Diaria UTI NEONATAL UTIN (TIPO II)</td><td>0 dias</td><td>R$ 0,00</td><td>210</td><td>R$ 188.344,80</td><td>-210</td></tr><tr><td>UTI · QUEIMADOS</td><td>0 dias</td><td>R$ 0,00</td><td>30</td><td>R$ 21.000,00</td><td>-30</td></tr><tr class="tot"><td>UTI · Total Geral de DIARIAS DE UTI</td><td>156 dias</td><td>R$ 124.157,04</td><td>600</td><td>R$ 488.194,80</td><td>-444</td></tr><tr class="gr"><td>AIH Realizadas (R_PROD_FINANCIAMENTO)</td><td>420</td><td>R$ 1.068.113,08</td><td>1.635</td><td>25.7%</td><td>-1.215</td></tr></tbody></table></div>
+      </tr></thead><tbody id="pdfPreviewBody"></tbody></table></div>
       <div class="pdf-actions">
-        <button class="pdf-btn" onclick="pdfAplicar()" disabled="">✅ Aplicar ao Painel e Baixar HTML</button>
+        <button class="pdf-btn" onclick="pdfAplicar()">✅ Aplicar ao Painel e Baixar HTML</button>
         <span class="dim" style="font-size:11px;color:var(--txt3)">O painel na tela é atualizado imediatamente. Suba o arquivo baixado no GitHub Pages para publicar.</span>
       </div>
     </div>
@@ -1628,27 +1033,29 @@ function parseProducao(g){
 
 /* ── Demo fallback data (valores reais da planilha) ── */
 function demoResumo(){
-  return {
-    competencia:"07/2026",meta_aih:1635,prod_geral:420,ating_pct:0.2569,diferenca:-1215,
+  var c=function(r,v,co,m,d,g,l){return{real:r,val:v,contr:co,meta:m,dif:d,gval:g,lbl:l};};
+  var u=function(r,v,co,m,d,g,l){return{dias:r,val:v,contr:co,meta:m,dif:d,gval:g,lbl:l};};
+  return{
+    competencia:'07/2026',meta_aih:1635,prod_geral:1608,ating_pct:0.9835,diferenca:-27,
     cir: {lbl:'CIRURGICA',labelOnly:true,real:0,val:0,contr:0,meta:0,dif:0,gval:0},
-    elet:{real:37,val:37276.27,contr:82,meta:61471.63,dif:-45,gval:-24195.36,lbl:"Eletivo"},
-    urg:{real:108,val:185363.58,contr:344,meta:554200.76,dif:-236,gval:-368837.18,lbl:"Urgencia"},
-    cli:{real:132,val:210624.29,contr:360,meta:472909.04,dif:-228,gval:-262284.75,lbl:"CLÍNICO/PEDIATRIA"},
-    obs:{real:48,val:40599.46,contr:303,meta:247857.03,dif:-255,gval:-207257.57,lbl:"OBSTETRÍCIA"},
-    mTot:{real:325,val:473863.6,contr:1089,meta:1336438.46,dif:-764,gval:-862574.86,lbl:"Total AIH's de Média Complexidade - MAC"},
-    alta:{real:75,val:431741.53,contr:229,meta:1426994.18,dif:-154,gval:-995252.65,lbl:"Total AIH's de  ALTA COMPLEXIDADE - MAC"},
+    elet:c(157, 163039.34,  82,  61471.63,   75,  101567.71,'Eletivo'),
+    urg: c(317, 683218.01, 344, 554200.76,  -27,  129017.25,'Urgencia'),
+    cli: c(595,1060641.47, 360, 472909.04,  235,  587732.43,'CLÍNICO/PEDIATRIA'),
+    obs: c(167, 142678.96, 303, 247857.03, -136, -105178.07,'OBSTETRÍCIA'),
+    mTot:c(1236,2049577.78,1089,1336438.46, 147, 2049430.78,"Total AIH's de Média Complexidade - MAC"),
+    alta:c( 265,1596591.25, 229,1426994.18,  36,  169597.07,"Total AIH's de  ALTA COMPLEXIDADE - MAC"),
     uti:{
-      adulto:{dias:90,val:69242.4,contr:330,meta:253888.8,dif:-240,gval:-184646.4,lbl:"Diaria UTI ADULTO (UTI II)"},
-      ped:{dias:66,val:54914.64,contr:30,meta:24961.2,dif:-36,gval:29953.44,lbl:"Diaria UTI PEDIATRICA (UTI II)"},
-      neo:{dias:0,val:0,contr:210,meta:188344.8,dif:-210,gval:-188344.8,lbl:"Diaria UTI NEONATAL UTIN (TIPO II)"},
-      que:{dias:0,val:0,contr:30,meta:21000,dif:-30,gval:-21000,lbl:"QUEIMADOS"},
-      total:{dias:156,val:124157.04,contr:600,meta:488194.8,dif:-444,gval:-364037.76,lbl:"Total Geral de DIARIAS DE UTI"},
+      adulto:u(346, 266198.56,330,253888.80,  16,  -12309.76,'Diaria UTI ADULTO (UTI II)'),
+      ped:   u(433, 360273.32, 30, 24961.20, 403, -335312.12,'Diaria UTI PEDIATRICA (UTI II)'),
+      neo:   u(251, 225116.88,210,188344.80,  41,  -36772.08,'Diaria UTI NEONATAL UTIN (TIPO II)'),
+      que:   u(  3,   2100.00, 30, 21000.00, -27,   18900.00,'QUEIMADOS'),
+      total: u(1033,853688.76,600,488194.80, 433, -365493.96,'Total Geral de DIARIAS DE UTI'),
     },
-    n_faec:20,  tot_faec_val:162507.95,
-    n_mac:325,  tot_mac_val:473863.6,
-    n_media:325,tot_media_val:473863.6,
-    n_alta:75,  tot_alta_val:431741.53,
-    tot_val:1068113.08,ticket:2543.13,
+    n_faec:107,  tot_faec_val:1311444.33,
+    n_mac:1236,  tot_mac_val:2049577.78,
+    n_media:1236,tot_media_val:2049577.78,
+    n_alta:265,  tot_alta_val:1596591.25,
+    tot_val:4957613.36,ticket:3082.47,
   };
 }
 function demoProducao(){
@@ -2683,23 +2090,22 @@ function pdfGerarDemoResumoText(d){
     '  };\n}';
 }
 
-function pdfBuildUpdatedHtml(d, VERSION){
-  var docClone=document.documentElement.cloneNode(true);
-  try{
-    var loginC=docClone.querySelector('#login-screen'); if(loginC) loginC.removeAttribute('style');
-    var errC=docClone.querySelector('#lg-err'); if(errC) errC.classList.remove('show');
-    var ldC=docClone.querySelector('#ld'); if(ldC) ldC.removeAttribute('style');
-    var ldbarC=docClone.querySelector('#ldbar'); if(ldbarC) ldbarC.removeAttribute('style');
-    docClone.querySelectorAll('.mod').forEach(function(m){ m.classList.toggle('on', m.id==='mod0'); });
-    docClone.querySelectorAll('.si[data-m]').forEach(function(el){ el.classList.toggle('on', el.getAttribute('data-m')==='0'); });
-    var pwdC=docClone.querySelector('#pwd-modal'); if(pwdC) pwdC.classList.remove('show');
-    var sbC=docClone.querySelector('#sb'); if(sbC) sbC.classList.remove('collapsed');
-    docClone.querySelectorAll('.pdf-drop').forEach(function(dz){ dz.classList.remove('has-file'); });
-    docClone.querySelectorAll('.pdf-drop-file').forEach(function(el){ el.textContent=''; });
-    var pv=docClone.querySelector('#pdfPreviewWrap'); if(pv) pv.style.display='none';
-    var lg=docClone.querySelector('#pdfLog'); if(lg) lg.textContent='Aguardando arquivos…';
-  }catch(zerr){ console.warn('[SC] limpeza do clone:',zerr); }
-  var html='<!DOCTYPE html>\n'+docClone.outerHTML;
+async function pdfFetchPristineHtml(){
+  var url=location.pathname.replace(/[^/]*$/,'')||'/';
+  if(url.slice(-1)==='/') url+='index.html';
+  var resp=await fetch(url+'?_nocache='+Date.now(), {cache:'no-store'});
+  if(!resp.ok) throw new Error('Não consegui buscar o HTML publicado atualmente (HTTP '+resp.status+').');
+  var txt=await resp.text();
+  if(txt.indexOf('function demoResumo(){')<0) throw new Error('O HTML buscado do servidor não parece ser o painel (demoResumo não encontrado).');
+  return txt;
+}
+
+async function pdfBuildUpdatedHtml(d, VERSION){
+  // Busca a versão OFICIAL e limpa direto do servidor — nunca clona a tela ao
+  // vivo (isso evitava que gráficos/estilos já renderizados na sessão atual
+  // fossem "assados" dentro do arquivo publicado, inflando e corrompendo o HTML
+  // a cada ciclo de Aplicar).
+  var html=await pdfFetchPristineHtml();
   var newFn=pdfGerarDemoResumoText(d);
   var idx=html.indexOf('function demoResumo(){');
   if(idx<0) throw new Error('Não encontrei demoResumo() no HTML — estrutura do painel pode ter mudado.');
@@ -2709,6 +2115,7 @@ function pdfBuildUpdatedHtml(d, VERSION){
   html=html.replace(new RegExp("var"+" CURRENT_VER="+"'"+"[^']*"+"'"), "var CURRENT_VER="+"'"+VERSION+"'");
   return html;
 }
+
 
 function pdfBaixarArquivo(html){
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
@@ -2736,7 +2143,7 @@ async function pdfAplicar(){
       function p(x,l){x=String(x);while(x.length<l)x='0'+x;return x;}
       return ''+n.getFullYear()+p(n.getMonth()+1,2)+p(n.getDate(),2)+p(n.getHours(),2)+p(n.getMinutes(),2)+p(n.getSeconds(),2);
     })();
-    var html=pdfBuildUpdatedHtml(d, VERSION);
+    var html=await pdfBuildUpdatedHtml(d, VERSION);
 
     // 3) Publica direto no GitHub (se configurado) — a Vercel redeploya sozinha.
     //    Sem token configurado, cai no comportamento antigo (baixa o arquivo).
@@ -2780,7 +2187,7 @@ init();
 <!-- ═══ AUTO-REFRESH GITHUB PAGES v20260716141759 ════════════════ -->
 <script>
 (function(){
-  var CURRENT_VER='20260810152206';
+  var CURRENT_VER='20260728113453';
   var PAGE_URL=location.href.split('?')[0].split('#')[0];
   // Garante URL sem cache
   if(PAGE_URL.slice(-1)==='/') PAGE_URL+='index.html';
@@ -2803,8 +2210,7 @@ init();
   console.log('[SC] Auto-refresh ativo. Versão atual: '+CURRENT_VER);
 })();
 </script>
+</body>
+</html>
 
 
-
-
-<svg id="SvgjsSvg1001" width="2" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev" style="overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0;"><defs id="SvgjsDefs1002"></defs><polyline id="SvgjsPolyline1003" points="0,0"></polyline><path id="SvgjsPath1004" d="M0 0 "></path></svg></body></html>
