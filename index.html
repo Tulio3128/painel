@@ -2023,7 +2023,7 @@ async function pdfProcessar(){
       alta:{real:agg.nAlta,  val:agg.vAlta,  contr:cfg.alta_co, meta:cfg.alta_m,dif:agg.nAlta-cfg.alta_co,  gval:agg.vAlta-cfg.alta_m, lbl:"Total AIH's de  ALTA COMPLEXIDADE - MAC"},
       uti:{
         adulto:{dias:agg.utiDias.adulto, val:uA_v, contr:cfg.uti_a_co, meta:uA_m, dif:agg.utiDias.adulto-cfg.uti_a_co, gval:uA_v-uA_m, lbl:'Diaria UTI ADULTO (UTI II)'},
-        ped:   {dias:agg.utiDias.ped,    val:uP_v, contr:cfg.uti_p_co, meta:uP_m, dif:cfg.uti_p_co-agg.utiDias.ped,    gval:uP_v-uP_m, lbl:'Diaria UTI PEDIATRICA (UTI II)'},
+        ped:   {dias:agg.utiDias.ped,    val:uP_v, contr:cfg.uti_p_co, meta:uP_m, dif:cfg.uti_p_co-agg.utiDias.ped,    gval:uP_m-uP_v, lbl:'Diaria UTI PEDIATRICA (UTI II)'},
         neo:   {dias:agg.utiDias.neo,    val:uN_v, contr:cfg.uti_n_co, meta:uN_m, dif:agg.utiDias.neo-cfg.uti_n_co,    gval:uN_v-uN_m, lbl:'Diaria UTI NEONATAL UTIN (TIPO II)'},
         que:   {dias:agg.utiDias.que,    val:uQ_v, contr:cfg.uti_q_co, meta:uQ_m, dif:agg.utiDias.que-cfg.uti_q_co,    gval:uQ_v-uQ_m, lbl:'QUEIMADOS'},
         total: {dias:uT_dias,            val:uT_v, contr:uT_co,        meta:uT_m, dif:uT_dias-uT_co,                   gval:uT_v-uT_m, lbl:'Total Geral de DIARIAS DE UTI'},
