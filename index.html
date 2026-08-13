@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="sc-version" content="20260812140527">
+<meta name="sc-version" content="20260813142159">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Painel SUS · Santa Casa Montes Claros</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1083,26 +1083,26 @@ function parseProducao(g){
 /* ── Demo fallback data (valores reais da planilha) ── */
 function demoResumo(){
   return {
-    competencia:"08/2026",meta_aih:1494,prod_geral:621,ating_pct:0.4157,diferenca:-873,
+    competencia:"08/2026",meta_aih:1494,prod_geral:715,ating_pct:0.4786,diferenca:-779,
     cir: {lbl:'CIRURGICA',labelOnly:true,real:0,val:0,contr:0,meta:0,dif:0,gval:0},
-    elet:{real:61,val:58753.94,contr:82,meta:61471.63,dif:-21,gval:-2717.69,lbl:"Eletivo"},
-    urg:{real:169,val:308561.15,contr:344,meta:554200.76,dif:-175,gval:-245639.61,lbl:"Urgencia"},
-    cli:{real:195,val:327469.72,contr:360,meta:472909.04,dif:-165,gval:-145439.32,lbl:"CLÍNICO/PEDIATRIA"},
-    obs:{real:72,val:63413.56,contr:303,meta:247857.03,dif:-231,gval:-184443.47,lbl:"OBSTETRÍCIA"},
-    mTot:{real:497,val:758198.37,contr:1089,meta:1336438.46,dif:-592,gval:-578240.09,lbl:"Total AIH's de Média Complexidade - MAC"},
-    alta:{real:95,val:555530.79,contr:229,meta:1426994.18,dif:-134,gval:-871463.39,lbl:"Total AIH's de  ALTA COMPLEXIDADE - MAC"},
+    elet:{real:66,val:62013.57,contr:82,meta:61471.63,dif:-16,gval:541.94,lbl:"Eletivo"},
+    urg:{real:217,val:396753.32,contr:344,meta:554200.76,dif:-127,gval:-157447.44,lbl:"Urgencia"},
+    cli:{real:217,val:353303.89,contr:360,meta:472909.04,dif:-143,gval:-119605.15,lbl:"CLÍNICO/PEDIATRIA"},
+    obs:{real:78,val:67757.6,contr:303,meta:247857.03,dif:-225,gval:-180099.43,lbl:"OBSTETRÍCIA"},
+    mTot:{real:578,val:879828.38,contr:1089,meta:1336438.46,dif:-511,gval:-456610.08,lbl:"Total AIH's de Média Complexidade - MAC"},
+    alta:{real:104,val:610995.13,contr:229,meta:1426994.18,dif:-125,gval:-815999.05,lbl:"Total AIH's de  ALTA COMPLEXIDADE - MAC"},
     uti:{
-      adulto:{dias:309,val:237732.24,contr:330,meta:253888.8,dif:-21,gval:-16156.56,lbl:"Diaria UTI ADULTO (UTI II)"},
-      ped:{dias:91,val:75715.64,contr:30,meta:24961.2,dif:-61,gval:-50754.44,lbl:"Diaria UTI PEDIATRICA (UTI II)"},
-      neo:{dias:5,val:4484.4,contr:210,meta:188344.8,dif:-205,gval:-183860.4,lbl:"Diaria UTI NEONATAL UTIN (TIPO II)"},
+      adulto:{dias:328,val:252350.08,contr:330,meta:253888.8,dif:-2,gval:-1538.72,lbl:"Diaria UTI ADULTO (UTI II)"},
+      ped:{dias:116,val:96516.64,contr:30,meta:24961.2,dif:-86,gval:-71555.44,lbl:"Diaria UTI PEDIATRICA (UTI II)"},
+      neo:{dias:60,val:53812.8,contr:210,meta:188344.8,dif:-150,gval:-134532,lbl:"Diaria UTI NEONATAL UTIN (TIPO II)"},
       que:{dias:0,val:0,contr:30,meta:21000,dif:-30,gval:-21000,lbl:"QUEIMADOS"},
-      total:{dias:405,val:317932.28,contr:600,meta:488194.8,dif:-195,gval:-170262.52,lbl:"Total Geral de DIARIAS DE UTI"},
+      total:{dias:504,val:402679.52,contr:600,meta:488194.8,dif:-96,gval:-85515.28,lbl:"Total Geral de DIARIAS DE UTI"},
     },
-    n_faec:29,  tot_faec_val:346906.18,
-    n_mac:497,  tot_mac_val:758198.37,
-    n_media:497,tot_media_val:758198.37,
-    n_alta:95,  tot_alta_val:555530.79,
-    tot_val:1660635.34,ticket:2674.13,
+    n_faec:33,  tot_faec_val:377266.29,
+    n_mac:578,  tot_mac_val:879828.38,
+    n_media:578,tot_media_val:879828.38,
+    n_alta:104,  tot_alta_val:610995.13,
+    tot_val:1868089.8,ticket:2612.71,
   };
 }
 function demoProducao(){
@@ -2318,7 +2318,7 @@ init();
 <!-- ═══ AUTO-REFRESH GITHUB PAGES v20260716141759 ════════════════ -->
 <script>
 (function(){
-  var CURRENT_VER='20260812140527';
+  var CURRENT_VER='20260813142159';
   var PAGE_URL=location.href.split('?')[0].split('#')[0];
   // Garante URL sem cache
   if(PAGE_URL.slice(-1)==='/') PAGE_URL+='index.html';
