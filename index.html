@@ -492,7 +492,7 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
     <div class="si dim" data-m="3" onclick="goMod(3)" style="pointer-events:auto;opacity:.6"><div class="ic">📋</div><span class="si-lbl">Contratos</span></div>
     <div class="si dim" data-m="4" onclick="goMod(4)" style="pointer-events:auto;opacity:.6"><div class="ic">📈</div><span class="si-lbl">Relatórios</span></div>
     <div class="si dim" data-m="5" onclick="goMod(5)" style="pointer-events:auto;opacity:.6"><div class="ic">⚙️</div><span class="si-lbl">Configurações</span></div>
-    <div class="si" data-m="6" onclick="goMod(6)"><div class="ic">📥</div><span class="si-lbl">Atualizar via PDF</span></div>
+    <div class="si" data-m="6" onclick="goMod(6)"><div class="ic">📥</div><span class="si-lbl">Atualizar base de dados</span></div>
   </nav>
   <!-- Filtros removidos conforme solicitado -->
 
@@ -1116,7 +1116,7 @@ function toggleSb(){
 }
 
 /* ── Module switch ── */
-var MNAMES=['Metas AIH\'s','Valores por AIH\'s','Diárias de UTI',null,null,null,'Atualizar via PDF'];
+var MNAMES=['Metas AIH\'s','Valores por AIH\'s','Diárias de UTI',null,null,null,'Atualizar base de dados'];
 var _PWD='3643';
 var _PWD_MODS={1:true,2:true,3:true,4:true,5:true,6:true};
 var _PWD_TARGET=0;
@@ -1125,7 +1125,7 @@ function _unlock(m){try{sessionStorage.setItem('sc_unlock_'+m,'1');}catch(x){}}
 function goMod(i){
   if(_PWD_MODS[i]&&!_isUnlocked(i)){
     _PWD_TARGET=i;
-    var names=["Metas AIHs","Valores por AIHs","Dias de UTI","Contratos","Relatorios","Configuracoes","Atualizar via PDF"];
+    var names=["Metas AIHs","Valores por AIHs","Dias de UTI","Contratos","Relatorios","Configuracoes","Atualizar base de dados"];
     var el=document.getElementById('pwd-modname');
     if(el) el.textContent=names[i]||'Módulo Restrito';
     var inp=document.getElementById('pwd-input');
