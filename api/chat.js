@@ -28,7 +28,7 @@ export default async function handler(req, res) {
         parts: [{ text: String(m.text) }],
       }));
 
-    const model = 'gemini-2.5-flash';
+    const model = 'gemini-flash-latest';
     const url =
       'https://generativelanguage.googleapis.com/v1beta/models/' +
       model +
