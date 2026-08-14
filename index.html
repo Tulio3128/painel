@@ -2254,12 +2254,21 @@ function chatRenderTyping(){
   return div;
 }
 
-function chatRespostaSimulada(msg){
-  // Placeholder: ainda não está conectado a nenhuma API de IA real.
-  // Quando quiser ligar a um modelo de verdade, é só trocar esta função
-  // por uma chamada fetch() para o backend/API desejado.
-  return 'Ainda não estou conectado a um modelo de IA de verdade — essa é só a interface do chat funcionando. '
-    +'Assim que quiser, posso ser ligado a uma API real (ex: Claude, GPT) pra responder de verdade sobre produção, faturamento e dados do painel.';
+async function chatObterResposta(){
+  try{
+    var resp=await fetch('/api/chat', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ messages: CHAT_HISTORY })
+    });
+    var data=await resp.json().catch(function(){ return {}; });
+    if(!resp.ok || !data.ok){
+      throw new Error((data && data.error) || ('Falha ao consultar a IA (HTTP '+resp.status+')'));
+    }
+    return data.text;
+  }catch(e){
+    return '⚠ Não consegui falar com a IA agora: '+e.message;
+  }
 }
 
 function chatEnviar(){
@@ -2274,15 +2283,14 @@ function chatEnviar(){
   var btn=document.getElementById('chatSendBtn');
   if(btn) btn.disabled=true;
   chatRenderTyping();
-  setTimeout(function(){
+  chatObterResposta().then(function(resposta){
     var typingRow=document.getElementById('chatTypingRow');
     if(typingRow) typingRow.remove();
-    var resposta=chatRespostaSimulada(msg);
     chatRenderMsg('ai',resposta);
     CHAT_HISTORY.push({role:'ai',text:resposta});
     if(btn) btn.disabled=false;
     inp.focus();
-  }, 650+Math.random()*500);
+  });
 }
 
 function chatInit(){
