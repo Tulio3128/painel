@@ -1167,14 +1167,14 @@ function toggleSb(){
 /* ── Module switch ── */
 var MNAMES=['Metas AIH\'s','Valores por AIH\'s','Diárias de UTI',null,null,null,'Atualizar Base','Copiloto IA'];
 var _PWD='3643';
-var _PWD_MODS={1:true,2:true,3:true,4:true,5:true,6:true};
+var _PWD_MODS={1:true,2:true,3:true,4:true,5:true,6:true,7:true};
 var _PWD_TARGET=0;
 function _isUnlocked(m){try{return sessionStorage.getItem('sc_unlock_'+m)==='1';}catch(x){return false;}}
 function _unlock(m){try{sessionStorage.setItem('sc_unlock_'+m,'1');}catch(x){}}
 function goMod(i){
   if(_PWD_MODS[i]&&!_isUnlocked(i)){
     _PWD_TARGET=i;
-    var names=["Metas AIHs","Valores por AIHs","Dias de UTI","Contratos","Relatorios","Configuracoes","Atualizar Base"];
+    var names=["Metas AIHs","Valores por AIHs","Dias de UTI","Contratos","Relatorios","Configuracoes","Atualizar Base","Copiloto IA"];
     var el=document.getElementById('pwd-modname');
     if(el) el.textContent=names[i]||'Módulo Restrito';
     var inp=document.getElementById('pwd-input');
