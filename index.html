@@ -2254,12 +2254,44 @@ function chatRenderTyping(){
   return div;
 }
 
+function chatBuildContext(){
+  if(!RSD) return null;
+  function pctStr(v){ return v ? (v*100).toFixed(1)+'%' : '0%'; }
+  return {
+    competencia: RSD.competencia,
+    total_aihs_realizadas: RSD.prod_geral,
+    meta_mensal: RSD.meta_aih,
+    diferenca_vs_meta: RSD.diferenca,
+    percentual_atingimento: pctStr(RSD.ating_pct),
+    producao_por_grupo: [
+      {grupo:'Eletivo (Cirúrgica)',      realizado:RSD.elet.real, contratado:RSD.elet.contr, diferenca:RSD.elet.dif},
+      {grupo:'Urgência (Cirúrgica)',     realizado:RSD.urg.real,  contratado:RSD.urg.contr,  diferenca:RSD.urg.dif},
+      {grupo:'Clínico/Pediatria',        realizado:RSD.cli.real,  contratado:RSD.cli.contr,  diferenca:RSD.cli.dif},
+      {grupo:'Obstetrícia',              realizado:RSD.obs.real,  contratado:RSD.obs.contr,  diferenca:RSD.obs.dif},
+      {grupo:'Alta Complexidade',        realizado:RSD.alta.real, contratado:RSD.alta.contr, diferenca:RSD.alta.dif}
+    ],
+    diarias_uti: {
+      adulto:    {dias:RSD.uti.adulto.dias, contratado:RSD.uti.adulto.contr},
+      pediatrica:{dias:RSD.uti.ped.dias,    contratado:RSD.uti.ped.contr},
+      neonatal:  {dias:RSD.uti.neo.dias,    contratado:RSD.uti.neo.contr},
+      queimados: {dias:RSD.uti.que.dias,    contratado:RSD.uti.que.contr}
+    },
+    financeiro: {
+      total_faec: RSD.tot_faec_val,
+      total_mac: RSD.tot_mac_val,
+      total_media_complexidade: RSD.tot_media_val,
+      total_alta_complexidade: RSD.tot_alta_val
+    },
+    modulos_reais_do_painel: ["Metas AIH's","Valores por AIH's","Diárias de UTI","Contratos","Relatórios","Configurações","Atualizar Base","Copiloto IA"]
+  };
+}
+
 async function chatObterResposta(){
   try{
     var resp=await fetch('/api/chat', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ messages: CHAT_HISTORY })
+      body:JSON.stringify({ messages: CHAT_HISTORY, context: chatBuildContext() })
     });
     var data=await resp.json().catch(function(){ return {}; });
     if(!resp.ok || !data.ok){
