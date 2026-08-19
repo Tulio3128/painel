@@ -14,18 +14,29 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { messages } = req.body || {};
+    const { messages, context } = req.body || {};
     if (!Array.isArray(messages) || messages.length === 0) {
       res.status(400).json({ error: 'Faltou o campo "messages" no corpo da requisição.' });
       return;
     }
+
+    const dadosTexto = context
+      ? '\n\nDADOS ATUAIS DO PAINEL (competência ' + (context.competencia || '?') + '), em JSON — use SOMENTE estes números ao responder sobre valores, e nunca invente outros:\n' +
+        JSON.stringify(context, null, 2)
+      : '\n\nNenhum dado carregado no painel no momento (RESUMO ainda não foi processado). Avise a pessoa disso caso ela pergunte por números.';
 
     // Converte {role:'user'|'ai', text} do chat para o formato OpenAI-compatible da Groq
     const chatMessages = [
       {
         role: 'system',
         content:
-          'Você é o Copiloto IA do Painel SUS da Santa Casa de Montes Claros. Ajude com dúvidas sobre produção hospitalar, faturamento SUS, AIH, complexidade média/alta, diárias de UTI, FAEC/MAC e uso do painel. Seja direto, claro e responda em português do Brasil.',
+          'Você é o Copiloto IA do Painel SUS da Santa Casa de Montes Claros. Ajude com dúvidas sobre produção hospitalar, faturamento SUS, AIH, complexidade média/alta, diárias de UTI, FAEC/MAC e uso do painel.\n\n' +
+          'REGRAS IMPORTANTES:\n' +
+          '1. Os ÚNICOS módulos que existem no painel são: Metas AIH\'s, Valores por AIH\'s, Diárias de UTI, Contratos, Relatórios, Configurações, Atualizar Base, Copiloto IA (todos na barra lateral esquerda). NUNCA invente outros nomes de menu, submenu, botão ou caminho de navegação que não estejam nessa lista.\n' +
+          '2. Para responder sobre números/valores (produção, metas, diferenças, UTI, financeiro), use exclusivamente o JSON em "DADOS ATUAIS DO PAINEL" abaixo. NUNCA invente números de exemplo, unidades fictícias (como "Pronto-Socorro") ou dados ilustrativos — se o dado pedido não estiver no JSON, diga claramente que não está disponível no momento.\n' +
+          '3. Se a pessoa perguntar "onde vejo X", responda com o módulo real da lista acima que contém essa informação, sem inventar caminhos de cliques que não existem no sistema.\n' +
+          '4. Seja direto e claro, com o número já calculado na resposta quando possível, e responda em português do Brasil.' +
+          dadosTexto,
       },
       ...messages
         .filter((m) => m && m.text)
