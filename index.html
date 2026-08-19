@@ -10,6 +10,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.44.0/apexcharts.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
   --bg:#0F172A;--bg1:#111827;--bg2:#1E293B;--bg3:#253348;
@@ -644,6 +647,10 @@ body{background:radial-gradient(ellipse 80% 60% at 20% 10%,#112b57 0%,#071427 50
         </div>
       </div>
       <div class="chat-body" id="chatBody"></div>
+      <div class="chat-quick-row" style="display:flex;gap:8px;padding:0 14px 8px;">
+        <button class="btn-exp" style="font-size:12px" onclick="chatAcaoRapida('pdf')">📄 Gerar PDF</button>
+        <button class="btn-exp" style="font-size:12px" onclick="chatAcaoRapida('excel')">📊 Gerar Excel</button>
+      </div>
       <div class="chat-input-row">
         <textarea class="chat-input" id="chatInput" rows="1" placeholder="Digite sua mensagem..."></textarea>
         <button class="chat-send" id="chatSendBtn" onclick="chatEnviar()">➤</button>
@@ -2254,6 +2261,148 @@ function chatRenderTyping(){
   return div;
 }
 
+/* ── Geração de documentos (PDF/Excel) a partir dos dados reais do RSD ──
+   Nunca usa a IA para montar números — evita risco de valores inventados
+   em documentos de faturamento. */
+function chatGerarPDF(){
+  var d=RSD;
+  if(!d) return false;
+  var jsPDFLib = window.jspdf && window.jspdf.jsPDF;
+  if(!jsPDFLib){ alert('Biblioteca de PDF não carregou. Recarregue a página e tente de novo.'); return false; }
+
+  var doc = new jsPDFLib();
+  doc.setFontSize(14);
+  doc.text('Painel SUS — Santa Casa de Montes Claros', 14, 16);
+  doc.setFontSize(10);
+  doc.text('Competência: '+(d.competencia||''), 14, 23);
+
+  doc.autoTable({
+    startY: 28,
+    head: [['Indicador','Valor']],
+    body: [
+      ['Total de AIHs realizadas', String(d.prod_geral)],
+      ['Meta mensal', String(d.meta_aih)],
+      ['Diferença vs meta', String(d.diferenca)],
+      ['Percentual de atingimento', ((d.ating_pct||0)*100).toFixed(1)+'%'],
+    ],
+    theme:'grid', headStyles:{fillColor:[30,58,95]}
+  });
+
+  var y = doc.lastAutoTable.finalY + 8;
+  doc.setFontSize(11);
+  doc.text('Produção por grupo', 14, y);
+  doc.autoTable({
+    startY: y+3,
+    head: [['Grupo','Realizado','Contratado','Diferença']],
+    body: [
+      [d.elet.lbl||'Eletivo', d.elet.real, d.elet.contr, d.elet.dif],
+      [d.urg.lbl||'Urgência', d.urg.real, d.urg.contr, d.urg.dif],
+      [d.cli.lbl||'Clínico/Pediatria', d.cli.real, d.cli.contr, d.cli.dif],
+      [d.obs.lbl||'Obstetrícia', d.obs.real, d.obs.contr, d.obs.dif],
+      [d.alta.lbl||'Alta Complexidade', d.alta.real, d.alta.contr, d.alta.dif],
+    ],
+    theme:'grid', headStyles:{fillColor:[30,58,95]}
+  });
+
+  y = doc.lastAutoTable.finalY + 8;
+  doc.text('Diárias de UTI', 14, y);
+  doc.autoTable({
+    startY: y+3,
+    head: [['Tipo','Dias realizados','Dias contratados']],
+    body: [
+      ['Adulto', d.uti.adulto.dias, d.uti.adulto.contr],
+      ['Pediátrica', d.uti.ped.dias, d.uti.ped.contr],
+      ['Neonatal', d.uti.neo.dias, d.uti.neo.contr],
+      ['Queimados', d.uti.que.dias, d.uti.que.contr],
+    ],
+    theme:'grid', headStyles:{fillColor:[30,58,95]}
+  });
+
+  y = doc.lastAutoTable.finalY + 8;
+  doc.text('Financeiro', 14, y);
+  doc.autoTable({
+    startY: y+3,
+    head: [['Indicador','Valor (R$)']],
+    body: [
+      ['Total FAEC', (d.tot_faec_val||0).toLocaleString('pt-BR',{minimumFractionDigits:2})],
+      ['Total MAC', (d.tot_mac_val||0).toLocaleString('pt-BR',{minimumFractionDigits:2})],
+      ['Total Média Complexidade', (d.tot_media_val||0).toLocaleString('pt-BR',{minimumFractionDigits:2})],
+      ['Total Alta Complexidade', (d.tot_alta_val||0).toLocaleString('pt-BR',{minimumFractionDigits:2})],
+    ],
+    theme:'grid', headStyles:{fillColor:[30,58,95]}
+  });
+
+  doc.save('relatorio_painel_sus_'+(d.competencia||'').replace('/','-')+'.pdf');
+  return true;
+}
+
+function chatGerarExcel(){
+  var d=RSD;
+  if(!d) return false;
+  var XLSXLib = window.XLSX;
+  if(!XLSXLib){ alert('Biblioteca de Excel não carregou. Recarregue a página e tente de novo.'); return false; }
+
+  var wb = XLSXLib.utils.book_new();
+
+  var wsResumo = XLSXLib.utils.aoa_to_sheet([
+    ['Painel SUS — Santa Casa de Montes Claros'],
+    ['Competência', d.competencia||''],
+    [],
+    ['Total de AIHs realizadas', d.prod_geral],
+    ['Meta mensal', d.meta_aih],
+    ['Diferença vs meta', d.diferenca],
+    ['Percentual de atingimento', ((d.ating_pct||0)*100).toFixed(1)+'%'],
+  ]);
+  XLSXLib.utils.book_append_sheet(wb, wsResumo, 'Resumo');
+
+  var wsProducao = XLSXLib.utils.aoa_to_sheet([
+    ['Grupo','Realizado','Contratado','Diferença'],
+    [d.elet.lbl||'Eletivo', d.elet.real, d.elet.contr, d.elet.dif],
+    [d.urg.lbl||'Urgência', d.urg.real, d.urg.contr, d.urg.dif],
+    [d.cli.lbl||'Clínico/Pediatria', d.cli.real, d.cli.contr, d.cli.dif],
+    [d.obs.lbl||'Obstetrícia', d.obs.real, d.obs.contr, d.obs.dif],
+    [d.alta.lbl||'Alta Complexidade', d.alta.real, d.alta.contr, d.alta.dif],
+  ]);
+  XLSXLib.utils.book_append_sheet(wb, wsProducao, 'Produção');
+
+  var wsUti = XLSXLib.utils.aoa_to_sheet([
+    ['Tipo','Dias realizados','Dias contratados'],
+    ['Adulto', d.uti.adulto.dias, d.uti.adulto.contr],
+    ['Pediátrica', d.uti.ped.dias, d.uti.ped.contr],
+    ['Neonatal', d.uti.neo.dias, d.uti.neo.contr],
+    ['Queimados', d.uti.que.dias, d.uti.que.contr],
+  ]);
+  XLSXLib.utils.book_append_sheet(wb, wsUti, 'UTI');
+
+  var wsFin = XLSXLib.utils.aoa_to_sheet([
+    ['Indicador','Valor (R$)'],
+    ['Total FAEC', d.tot_faec_val||0],
+    ['Total MAC', d.tot_mac_val||0],
+    ['Total Média Complexidade', d.tot_media_val||0],
+    ['Total Alta Complexidade', d.tot_alta_val||0],
+  ]);
+  XLSXLib.utils.book_append_sheet(wb, wsFin, 'Financeiro');
+
+  XLSXLib.writeFile(wb, 'relatorio_painel_sus_'+(d.competencia||'').replace('/','-')+'.xlsx');
+  return true;
+}
+
+function chatAcaoRapida(tipo){
+  if(!RSD){
+    chatRenderMsg('ai','Ainda não tenho dados carregados no painel pra gerar esse documento. Assim que o RESUMO for processado, é só pedir de novo.');
+    CHAT_HISTORY.push({role:'ai',text:'Ainda não tenho dados carregados no painel pra gerar esse documento.'});
+    return;
+  }
+  var ok = tipo==='pdf' ? chatGerarPDF() : chatGerarExcel();
+  if(ok){
+    var msg = tipo==='pdf'
+      ? 'Gerei o relatório em PDF com os dados atuais (competência '+(RSD.competencia||'')+'). O download já deve ter começado.'
+      : 'Gerei a planilha em Excel com os dados atuais (competência '+(RSD.competencia||'')+'). O download já deve ter começado.';
+    chatRenderMsg('ai',msg);
+    CHAT_HISTORY.push({role:'ai',text:msg});
+  }
+}
+
 function chatBuildContext(){
   if(!RSD) return null;
   function pctStr(v){ return v ? (v*100).toFixed(1)+'%' : '0%'; }
@@ -2314,6 +2463,24 @@ function chatEnviar(){
   inp.style.height='auto';
   var btn=document.getElementById('chatSendBtn');
   if(btn) btn.disabled=true;
+
+  // Se a pessoa pediu um documento (PDF/Excel), gera direto dos dados reais
+  // do painel, sem passar pela IA — garante que os números batem certinho.
+  var msgLower=msg.toLowerCase();
+  var querPdf = /\bpdf\b/.test(msgLower);
+  var querExcel = /\bexcel\b|\bxlsx\b|planilha/.test(msgLower);
+  if(querPdf || querExcel){
+    chatRenderTyping();
+    setTimeout(function(){
+      var typingRow=document.getElementById('chatTypingRow');
+      if(typingRow) typingRow.remove();
+      chatAcaoRapida(querPdf?'pdf':'excel');
+      if(btn) btn.disabled=false;
+      inp.focus();
+    }, 400);
+    return;
+  }
+
   chatRenderTyping();
   chatObterResposta().then(function(resposta){
     var typingRow=document.getElementById('chatTypingRow');
@@ -2338,7 +2505,7 @@ function chatInit(){
       inp.style.height=Math.min(inp.scrollHeight,120)+'px';
     });
   }
-  chatRenderMsg('ai','Olá! Eu sou o Copiloto IA do Painel SUS. 👋\nEm breve vou poder ajudar com dúvidas sobre produção, faturamento e os dados do painel.');
+  chatRenderMsg('ai','Olá! Eu sou o Copiloto IA do Painel SUS. 👋\nPosso tirar dúvidas sobre produção, faturamento e os dados do painel — e também gerar um relatório em PDF ou Excel com os dados atuais, é só pedir ou usar os botões acima.');
 }
 
 /* ── inicialização do módulo (uma vez) ── */
