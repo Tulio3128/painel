@@ -35,7 +35,7 @@ export default async function handler(req, res) {
         })),
     ];
 
-    const model = 'llama-3.3-70b-versatile';
+    const model = 'openai/gpt-oss-120b';
     const url = 'https://api.groq.com/openai/v1/chat/completions';
 
     const resp = await fetch(url, {
